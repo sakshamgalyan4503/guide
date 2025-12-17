@@ -4,6 +4,7 @@ info:
 
 servers:
   - url: https://staging.paysecure.net    
+  - url: https://app.paysecure.net    
 
 paths:
   /api/v1/purchases:

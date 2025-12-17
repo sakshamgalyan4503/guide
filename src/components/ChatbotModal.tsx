@@ -18,7 +18,7 @@ const ChatbotModal: React.FC<ChatbotModalProps> = ({ open, onClose, isDark }) =>
         <h3 className="chatbot-header">AI Assistant</h3>
 
         <iframe
-          src="https://www.chatbase.co/chatbot-iframe/PtIa1MWPIJChMGm5AUK9y"
+          src="https://www.chatbase.co/chatbot-iframe/YP99Wk5SDORJIO3n5m2zq"
           width="100%"
           height="500"
           style={{ border: "none", borderRadius: "12px" }}

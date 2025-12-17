@@ -84,15 +84,13 @@ export default function Home(): ReactNode {
             marginBottom: '50px', marginTop: '50px'
           }}>
 
-          {/* quickfindDocs */}
-
           {/* Quickfind Docs */}
           <div className={styles.quickLinks}>
             <div className={styles.quickfindDocs}>Quickfind Docs</div>
             <div className={styles.quickDocsGrid}>
-              <Link to='/' className={styles.docs}>
+              <Link to='https://docs.paysecure.net/merchantguide/' className={styles.docs}>
                 <div className={styles.docsHeader}>
-                  <img src="/img/nohoverprofile.svg" alt="" className={`${styles.docsIcon}  ${styles.activedocsIcon1}` } />
+                  <img src="/img/nohoverprofile.svg" alt="" className={`${styles.docsIcon} ${styles.activedocsIcon1}` } />
                   <img src="/img/nohoverarrow.svg" alt="" className={styles.arrowIcon} />
                 </div>
                 <div className={styles.docsText}>
@@ -130,32 +128,32 @@ export default function Home(): ReactNode {
             <div className={styles.developerToolsTitle}>Developer Tools</div>
             <div className={styles.devGrid}>
               <div className={styles.devLeft}>
-                <Link to='/docs/payin/pix' className={`${styles.developercards} ${styles.activeCard}`} >
+                <Link to='/docs/api/cryptobridge' className={`${styles.developercards} ${styles.activeCard}`} >
                   <span className={`${styles.linkText} ${styles.activeLink} ${styles.activeCard}`}>Payin APIs</span>
                   <img src="/img/nohoverarrow.svg" alt="arrow" className={styles.arrowIcon} />
                 </Link>
 
-                <Link to='/docs/payin/pix' className={`${styles.developercards} ${styles.activeCard}`}>
+                <Link to='/docs/api/cryptobridge' className={`${styles.developercards} ${styles.activeCard}`}>
                   <span className={`${styles.linkText} ${styles.activeLink}`}>Payout APIs</span>
                   <img src="/img/nohoverarrow.svg" alt="arrow" className={styles.arrowIcon} />
                 </Link>
 
-                <Link to='/docs/payin/pix' className={`${styles.developercards} ${styles.activeCard}`}>
+                <Link to='/docs/api/cryptobridge' className={`${styles.developercards} ${styles.activeCard}`}>
                   <span className={`${styles.linkText} ${styles.activeLink}`}>Authentication</span>
                   <img src="/img/nohoverarrow.svg" alt="arrow" className={styles.arrowIcon} />
                 </Link>
 
-                <Link to='/docs/payin/pix' className={`${styles.developercards} ${styles.activeCard}`}>
+                <Link to='/docs/api/cryptobridge' className={`${styles.developercards} ${styles.activeCard}`}>
                   <span className={`${styles.linkText} ${styles.activeLink}`}>Refund</span>
                   <img src="/img/nohoverarrow.svg" alt="arrow" className={styles.arrowIcon} />
                 </Link>
 
-                <Link to='/docs/payin/pix' className={`${styles.developercards} ${styles.activeCard}`}>
+                <Link to='/docs/api/cryptobridge' className={`${styles.developercards} ${styles.activeCard}`}>
                   <span className={`${styles.linkText} ${styles.activeLink}`}>Cashier</span>
                   <img src="/img/nohoverarrow.svg" alt="arrow" className={styles.arrowIcon} />
                 </Link>
 
-                <Link to='/docs/payin/pix' className={`${styles.developercards} ${styles.activeCard}`}>
+                <Link to='/docs/api/cryptobridge' className={`${styles.developercards} ${styles.activeCard}`}>
                   <span className={`${styles.linkText} ${styles.activeLink}`}>Verify Status</span>
                   <img src="/img/nohoverarrow.svg" alt="arrow" className={styles.arrowIcon} />
                 </Link>
