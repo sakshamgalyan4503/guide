@@ -9,7 +9,6 @@ yarn
 ```
 
 ## Local Development
-
 ```bash
 
 yarn start
