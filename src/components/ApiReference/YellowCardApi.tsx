@@ -12,23 +12,41 @@ interface Props {
   yamlUrl: string;
 }
 
+/** Utility to resolve $ref in schema */
+const resolveRef = (schema: any, spec: any): any => {
+  if (!schema || !schema.$ref) return schema;
+  const refPath = schema.$ref.replace("#/", "").split("/");
+  let current = spec;
+  for (const part of refPath) {
+    current = current?.[part];
+  }
+  return current;
+};
+
 /** Utility to generate an example JSON object from an OpenAPI schema */
-const generateExampleFromSchema = (schema: any): any => {
+const generateExampleFromSchema = (schema: any, spec: any): any => {
   if (!schema) return {};
 
-  if (schema.example) return schema.example;
-  if (schema.default !== undefined) return schema.default;
+  const resolved = resolveRef(schema, spec);
 
-  if (schema.type === "object" && schema.properties) {
+  if (resolved.example) return resolved.example;
+  if (resolved.default !== undefined) return resolved.default;
+
+  if (resolved.oneOf) {
+    return generateExampleFromSchema(resolved.oneOf[0], spec);
+  }
+
+  if (resolved.type === "object" || resolved.properties) {
     const obj: any = {};
-    for (const [key, value] of Object.entries(schema.properties)) {
-      obj[key] = generateExampleFromSchema(value);
+    const props = resolved.properties || {};
+    for (const [key, value] of Object.entries(props)) {
+      obj[key] = generateExampleFromSchema(value, spec);
     }
     return obj;
   }
 
-  if (schema.type === "array" && schema.items) {
-    return [generateExampleFromSchema(schema.items)];
+  if (resolved.type === "array" && resolved.items) {
+    return [generateExampleFromSchema(resolved.items, spec)];
   }
 
   // Fallbacks based on type
@@ -39,7 +57,7 @@ const generateExampleFromSchema = (schema: any): any => {
     boolean: false,
   };
 
-  return fallbacks[schema.type] !== undefined ? fallbacks[schema.type] : null;
+  return fallbacks[resolved.type] !== undefined ? fallbacks[resolved.type] : null;
 };
 
 const CopyButton = ({ text }: { text: string }) => {
@@ -74,23 +92,44 @@ export default function YellowCardApi({ yamlUrl }: Props) {
   const [loading, setLoading] = useState(false);
   const [language, setLanguage] = useState("curl");
 
+  // Dynamic parameters
+  const [pathParams, setPathParams] = useState<Record<string, string>>({});
+  const [queryParams, setQueryParams] = useState<Record<string, string>>({});
+
   const updateExamplesFromSpec = useCallback((parsedSpec: any, path: string, method: string) => {
     const endpoint = parsedSpec.paths[path][method];
+
+    // Extraction of parameters
+    const params = [...(endpoint.parameters || []), ...(parsedSpec.paths[path].parameters || [])];
+    const newPathParams: Record<string, string> = {};
+    const newQueryParams: Record<string, string> = {};
+
+    params.forEach((p: any) => {
+      const resolvedParam = resolveRef(p, parsedSpec);
+      if (resolvedParam.in === "path") {
+        newPathParams[resolvedParam.name] = String(resolvedParam.schema?.example || resolvedParam.schema?.default || `{${resolvedParam.name}}`);
+      } else if (resolvedParam.in === "query") {
+        newQueryParams[resolvedParam.name] = String(resolvedParam.schema?.example || resolvedParam.schema?.default || "");
+      }
+    });
+    setPathParams(newPathParams);
+    setQueryParams(newQueryParams);
 
     // Request Example
     const reqSchema = endpoint.requestBody?.content?.["application/json"]?.schema;
     if (reqSchema) {
-      const example = generateExampleFromSchema(reqSchema);
+      const example = generateExampleFromSchema(reqSchema, parsedSpec);
       setBody(JSON.stringify(example, null, 2));
     } else {
       setBody("{}");
     }
 
-    // Response Example
-    const resSchema = (endpoint.responses?.["200"] || endpoint.responses?.["201"])
-      ?.content?.["application/json"]?.schema;
+    // Response Example - scan for any successful response
+    const successCode = Object.keys(endpoint.responses || {}).find(code => code.startsWith("2"));
+    const resSchema = endpoint.responses?.[successCode || "200"]?.content?.["application/json"]?.schema;
+
     if (resSchema) {
-      const example = generateExampleFromSchema(resSchema);
+      const example = generateExampleFromSchema(resSchema, parsedSpec);
       setExampleResponse(JSON.stringify(example, null, 2));
     } else {
       setExampleResponse("{}");
@@ -127,6 +166,21 @@ export default function YellowCardApi({ yamlUrl }: Props) {
 
   const endpoint = spec.paths[currentPath][currentMethod];
 
+  const getFullUrl = () => {
+    let url = `${server}${currentPath}`;
+    // Replace path params
+    Object.entries(pathParams).forEach(([key, val]) => {
+      url = url.replace(`{${key}}`, val);
+    });
+    // Append query params
+    const q = new URLSearchParams();
+    Object.entries(queryParams).forEach(([key, val]) => {
+      if (val) q.append(key, val);
+    });
+    const qs = q.toString();
+    return qs ? `${url}?${qs}` : url;
+  };
+
   const execute = async () => {
     setLoading(true);
     setResponse(null);
@@ -142,7 +196,7 @@ export default function YellowCardApi({ yamlUrl }: Props) {
 
       const res = await axios({
         method: currentMethod,
-        url: `${server}${currentPath}`,
+        url: getFullUrl(),
         headers: {
           Authorization: token,
           "Content-Type": "application/json",
@@ -185,6 +239,7 @@ export default function YellowCardApi({ yamlUrl }: Props) {
               </div>
 
               <SchemaRenderer
+                spec={spec}
                 schema={
                   endpoint.requestBody.content["application/json"]
                     .schema
@@ -193,8 +248,32 @@ export default function YellowCardApi({ yamlUrl }: Props) {
             </>
           )}
 
+          {/* PARAMETERS SECTION (DOCS) */}
+          {(endpoint.parameters || spec.paths[currentPath].parameters) && (
+            <>
+              <div className="yc-section-header" style={{ marginTop: 40, borderBottom: '1px solid var(--yc-border)', paddingBottom: '12px', marginBottom: '16px' }}>
+                <div className="yc-body-title" style={{ fontSize: '14px', color: 'var(--yc-purple)' }}>Parameters</div>
+              </div>
+              <div className="yc-schema-properties">
+                {[...(endpoint.parameters || []), ...(spec.paths[currentPath].parameters || [])].map((p: any, i: number) => {
+                  const resolved = resolveRef(p, spec);
+                  return (
+                    <div key={i} className="yc-schema-card">
+                      <div className="yc-schema-meta">
+                        <span className="yc-schema-name">{resolved.name}</span>
+                        <span className="yc-schema-type yc-type-any">{resolved.in}</span>
+                        {resolved.required && <span className="yc-required">REQUIRED</span>}
+                      </div>
+                      {resolved.description && <div className="yc-schema-desc">{resolved.description}</div>}
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
+
           {/* RESPONSE */}
-          {endpoint.responses?.["200"] && (
+          {endpoint.responses && (
             <>
               <div className="yc-section-header" style={{ marginTop: 40, borderBottom: '1px solid var(--yc-border)', paddingBottom: '12px', marginBottom: '16px' }}>
                 <div className="yc-body-title" style={{ fontSize: '14px', color: 'var(--yc-purple)' }}>Example Response JSON</div>
@@ -203,13 +282,15 @@ export default function YellowCardApi({ yamlUrl }: Props) {
                 </div>
               </div>
 
-              <SchemaRenderer
-                schema={
-                  endpoint.responses["200"].content[
-                    "application/json"
-                  ].schema
-                }
-              />
+              {Object.keys(endpoint.responses).filter(c => c.startsWith("2")).map(code => (
+                <div key={code} style={{ marginBottom: 20 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--yc-teal)', marginBottom: 8 }}>Status {code}</div>
+                  <SchemaRenderer
+                    spec={spec}
+                    schema={endpoint.responses[code].content?.["application/json"]?.schema}
+                  />
+                </div>
+              ))}
             </>
           )}
         </div>
@@ -229,6 +310,37 @@ export default function YellowCardApi({ yamlUrl }: Props) {
               onChange={(e) => setToken(e.target.value)}
             />
           </div>
+
+          {/* PARAMETER INPUTS (PLAYGROUND) */}
+          {(Object.keys(pathParams).length > 0 || Object.keys(queryParams).length > 0) && (
+            <div style={{ marginBottom: 20 }}>
+              <div className="yc-section-header" style={{ borderBottom: '1px solid var(--yc-border)', paddingBottom: '8px', marginBottom: '12px' }}>
+                <div className="yc-body-title" style={{ fontSize: '13px', color: 'var(--yc-purple)', fontWeight: 700 }}>Parameters</div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {Object.entries(pathParams).map(([key, val]) => (
+                  <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <span style={{ fontSize: 12, width: 100, fontWeight: 600 }}>{key} (path)</span>
+                    <input
+                      style={{ flex: 1, padding: '6px 10px', borderRadius: 6, border: '1px solid var(--yc-border)' }}
+                      value={val}
+                      onChange={(e) => setPathParams({ ...pathParams, [key]: e.target.value })}
+                    />
+                  </div>
+                ))}
+                {Object.entries(queryParams).map(([key, val]) => (
+                  <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <span style={{ fontSize: 12, width: 100, fontWeight: 600 }}>{key} (query)</span>
+                    <input
+                      style={{ flex: 1, padding: '6px 10px', borderRadius: 6, border: '1px solid var(--yc-border)' }}
+                      value={val}
+                      onChange={(e) => setQueryParams({ ...queryParams, [key]: e.target.value })}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="yc-playground-grid" style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px' }}>
             <div>
@@ -269,30 +381,6 @@ export default function YellowCardApi({ yamlUrl }: Props) {
             {loading ? "Sending..." : "Send API Request"}
           </button>
 
-          <div style={{ marginTop: '20px' }}>
-            <div className="yc-section-header" style={{ borderBottom: '1px solid var(--yc-border)', paddingBottom: '12px', marginBottom: '16px' }}>
-              <DropDown
-                options={[
-                  { label: 'cURL', value: 'curl' },
-                  { label: 'Node.js', value: 'node' },
-                  { label: 'Python', value: 'python' }
-                ]}
-                value={language}
-                onChange={setLanguage}
-              />
-            </div>
-          </div>
-
-          <div className="yc-section-header" style={{ marginTop: '32px', borderBottom: '1px solid var(--yc-border)', paddingBottom: '12px', marginBottom: '16px' }}>
-            <div className="yc-body-title" style={{ fontSize: '14px', color: 'var(--yc-purple)', fontWeight: 700 }}>Generated Code</div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <CopyButton text={generateCode(currentMethod, `${server}${currentPath}`, token, body, language)} />
-            </div>
-          </div>
-          <pre className="yc-code" style={{ maxHeight: '200px', margin: 0 }}>
-            {generateCode(currentMethod, `${server}${currentPath}`, token, body, language)}
-          </pre>
-
           {response && (
             <>
               <div className="yc-section-header" style={{ marginTop: '40px', borderBottom: '1px solid var(--yc-border)', paddingBottom: '12px', marginBottom: '16px' }}>
@@ -307,6 +395,30 @@ export default function YellowCardApi({ yamlUrl }: Props) {
               </pre>
             </>
           )}
+
+          <div style={{ marginTop: '8px' }}>
+            <div className="yc-section-header" style={{ borderBottom: '1px solid var(--yc-border)' }}>
+              <DropDown
+                options={[
+                  { label: 'cURL', value: 'curl' },
+                  { label: 'Node.js', value: 'node' },
+                  { label: 'Python', value: 'python' }
+                ]}
+                value={language}
+                onChange={setLanguage}
+              />
+            </div>
+          </div>
+
+          <div className="yc-section-header" style={{ marginTop: '8px', borderBottom: '1px solid var(--yc-border)', paddingBottom: '8px', marginBottom: '8px' }}>
+            <div className="yc-body-title" style={{ fontSize: '14px', color: 'var(--yc-purple)', fontWeight: 700 }}>Generated Code</div>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <CopyButton text={generateCode(currentMethod, getFullUrl(), token, body, language)} />
+            </div>
+          </div>
+          <pre className="yc-code" style={{ maxHeight: '200px', margin: 0 }}>
+            {generateCode(currentMethod, getFullUrl(), token, body, language)}
+          </pre>
         </div>
       </div>
     </div>

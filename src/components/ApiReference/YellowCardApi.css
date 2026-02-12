@@ -76,6 +76,10 @@
     background: #f59e0b;
 }
 
+.yc-patch {
+    background: #739c27;
+}
+
 .yc-delete {
     background: #ef4444;
 }
@@ -304,7 +308,7 @@
     padding: 8px 12px;
     border-radius: 8px;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 500;
     outline: none;
     cursor: pointer;
     transition: all 0.2s;
@@ -329,7 +333,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
 }
 
 .yc-copy-btn {

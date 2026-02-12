@@ -1,20 +1,32 @@
 openapi: 3.0.3
+
 info:
-  title: ''
+  title: PaySecure Purchase API
+  version: 1.0.0
 
 servers:
-  - url: https://api.paysecure.net    
+  - url: https://api.paysecure.net
 
 paths:
   /api/v1/purchases:
     post:
-      tags: [MOBILE MONEY]
+      tags:
+        - MOBILE MONEY
       summary: Initiate a new purchase via MOBILE MONEY
+
       parameters:
         - in: header
           name: Authorization
           required: true
-          schema: { type: string }
+          schema:
+            type: string
+        - in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+            example: application/json
+
       requestBody:
         required: true
         content:
@@ -34,38 +46,108 @@ paths:
               properties:
                 client:
                   type: object
-                  required: [email, full_name, country, city, stateCode, street_address, zip_code, phone]
+                  required:
+                    - email
+                    - full_name
+                    - country
+                    - city
+                    - stateCode
+                    - street_address
+                    - zip_code
+                    - phone
                   properties:
-                    email: { type: string, format: email, example: client@email.com }
-                    full_name: { type: string, example: Client Name }
-                    country: { type: string, example: KE }
-                    city: { type: string, example: Nairobi }
-                    stateCode: { type: string, example: NB }
-                    street_address: { type: string, example: 123 5th Ave, Nairobi, Kenya 10010 }
-                    zip_code: { type: string, example: 10010 }
-                    phone: { type: string, example: +254759118686 }
+                    email:
+                      type: string
+                      format: email
+                      example: client@email.com
+                    full_name:
+                      type: string
+                      example: Client Name
+                    country:
+                      type: string
+                      example: KE
+                    city:
+                      type: string
+                      example: Nairobi
+                    stateCode:
+                      type: string
+                      example: NB
+                    street_address:
+                      type: string
+                      example: 123 5th Ave, Nairobi, Kenya 10010
+                    zip_code:
+                      type: string
+                      example: 10010
+                    phone:
+                      type: string
+                      example: +254759118686
+
                 purchase:
                   type: object
-                  required: [currency, products]
+                  required:
+                    - currency
+                    - products
                   properties:
-                    currency: { type: string, example: KES }
+                    currency:
+                      type: string
+                      example: KES
                     products:
                       type: array
                       items:
                         type: object
-                        required: [name, price]
+                        required:
+                          - name
+                          - price
                         properties:
-                          name: { type: string, example: h2334h }
-                          price: { type: number, example: 500 }
-                paymentMethod: { type: string, example: MOBILEMONEY }
-                merchantRef: { type: string, example: rsfwesfr[dffsaes }
-                brand_id: { type: string, format: uuid, example: 30f7ce6e-3b7e-46a2-9b50-484fc55be689 }
-                success_redirect: { type: string, format: uri, example: https://your.success.redirect.com }
-                failure_redirect: { type: string, format: uri, example: https://your.failure.redirect.com }
-                pending_redirect: { type: string, format: uri, example: https://your.pending.redirect.com }
-                success_callback: { type: string, format: uri, example: https://your.success.callback.com }
-                failure_callback: { type: string, format: uri, example: https://your.failure.callback.com }
-                expiryinmin: { type: string, example: "30" }
+                          name:
+                            type: string
+                            example: h2334h
+                          price:
+                            type: number
+                            example: 500
+
+                paymentMethod:
+                  type: string
+                  example: MOBILEMONEY
+
+                merchantRef:
+                  type: string
+                  example: rsfwesfrdffsaes
+
+                brand_id:
+                  type: string
+                  format: uuid
+                  example: 30f7ce6e-3b7e-46a2-9b50-484fc55be689
+
+                success_redirect:
+                  type: string
+                  format: uri
+                  example: https://your.success.redirect.com
+
+                failure_redirect:
+                  type: string
+                  format: uri
+                  example: https://your.failure.redirect.com
+
+                pending_redirect:
+                  type: string
+                  format: uri
+                  example: https://your.pending.redirect.com
+
+                success_callback:
+                  type: string
+                  format: uri
+                  example: https://your.success.callback.com
+
+                failure_callback:
+                  type: string
+                  format: uri
+                  example: https://your.failure.callback.com
+
+                expiryinmin:
+                  type: string
+                  example: "30"
+
       responses:
         '200':
           description: Purchase Created
@@ -74,82 +156,16 @@ paths:
               schema:
                 type: object
                 properties:
-                  purchaseId: { type: string, example: 689c499197281b45aac6f3be }
-                  client:
-                    type: object
-                    properties:
-                      email: { type: string, example: client@email.com }
-                      phone: { type: string, example: +254759118686 }
-                      full_name: { type: string, example: Client Name }
-                      country: { type: string, example: KE }
-                      city: { type: string, example: Nairobi }
-                      stateCode: { type: string, example: NB }
-                      street_address: { type: string, example: 123 5th Ave, Nairobi, Kenya 10010 }
-                      zip_code: { type: string, example: 10010 }
-                  updated_on: { type: integer, example: 1755072914 }
-                  type: { type: string, example: purchase }
-                  paymentMethod: { type: string, example: MOBILEMONEY }
-                  amountUnit: { type: string, example: MAJOR }
-                  errorMsg: { type: string, example: "" }
-                  redirectType: { type: string, example: POST }
-                  force_recurring: { type: boolean, example: false }
-                  created_on: { type: integer, example: 1755072913 }
-                  merchantRef: { type: string, example: rsfwesfr[dffsaes }
-                  merchantName: { type: string, example: arunsinghal }
-                  instruction: { type: string, example: Instrunction has been sent on your mobile number. }
-                  purchase:
-                    type: object
-                    properties:
-                      currency: { type: string, example: KES }
-                      products:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            name: { type: string, example: h2334h }
-                            quantity: { type: integer, example: 1 }
-                            price: { type: number, example: 500 }
-                            discount: { type: number, example: 0 }
-                            tax_percent: { type: string, example: "0.00" }
-                      total: { type: number, example: 500 }
-                      language: { type: string, example: en }
-                      total_formatted: { type: number, example: 1 }
-                      expireInMin: { type: string, example: "60" }
-                  payment:
-                    type: object
-                    properties:
-                      amount: { type: number, example: 500 }
-                      currency: { type: string, example: KES }
-                      net_amount: { type: number, example: 500 }
-                      fee_amount: { type: number, example: 0 }
-                      paid_on: { type: integer, example: 1755072913 }
-                  issuer_details:
-                    type: object
-                    properties:
-                      legal_name: { type: string, example: test6 }
-                      brand_name: { type: string, example: test6 }
-                  transaction_data:
-                    type: object
-                    properties:
-                      flow: { type: string, example: payform }
-                      extra:
-                        type: object
-                        properties:
-                          amount: { type: number, example: 500 }
-                          masked_pan: { type: string, example: MOBILEMONEY }
-                  status: { type: string, example: PAYMENT_IN_PROCESS }
-                  status_history:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        status: { type: string, example: created }
-                        timestamp: { type: integer, example: 1755072913 }
-                  is_test: { type: boolean, example: false }
-                  brand_id: { type: string, example: 30f7ce6e-3b7e-46a2-9b50-484fc55be689 }
-                  reference_generated: { type: string, example: PS1166 }
-                  issued: { type: string, example: 2025-08-13 }
-                  checkout_url: { type: string, example: https://api.choicepay.ca/payments/689c499197281b45aac6f3be/ }
+                  purchaseId:
+                    type: string
+                    example: 689c499197281b45aac6f3be
+                  status:
+                    type: string
+                    example: PAYMENT_IN_PROCESS
+                  checkout_url:
+                    type: string
+                    example: https://api.choicepay.ca/payments/689c499197281b45aac6f3be/
+
         '401':
           description: Authorization Error
           content:
@@ -157,5 +173,9 @@ paths:
               schema:
                 type: object
                 properties:
-                  message: { type: string, example: Invalid Authorization }
-                  code: { type: string, example: Invalid_Authorization }
+                  message:
+                    type: string
+                    example: Invalid Authorization
+                  code:
+                    type: string
+                    example: Invalid_Authorization

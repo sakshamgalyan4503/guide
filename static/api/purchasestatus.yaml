@@ -1,160 +1,228 @@
 openapi: 3.0.3
+
 info:
-  title: ''
+  title: PaySecure Purchase API
+  version: 1.0.0
 
 servers:
-  - url: https://api.paysecure.net    
+  - url: https://api.paysecure.net
 
 paths:
   /api/v1/purchases/{purchaseId}:
     get:
-      tags: [PURCHASE]
+      tags:
+        - PURCHASE
       summary: Get purchase details by purchaseId
+
       parameters:
         - in: path
           name: purchaseId
           required: true
-          schema: { type: string }
+          schema:
+            type: string
+
       responses:
-        '200-PAID':
-          description: Purchase completed successfully
+        '200':
+          description: Purchase details retrieved successfully
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  purchaseId: { type: string, example: 68a471c74d6f42211ab25eb3 }
-                  client:
-                    type: object
-                    properties:
-                      customerId: { type: string, example: NA }
-                      email: { type: string, example: rahul@paysecure.net }
-                      phone: { type: string, example: 9999999999 }
-                      full_name: { type: string, example: Nitendra Gautam }
-                      date_of_birth: { type: string, example: 1800-01-01 }
-                      street_address: { type: string, example: test test }
-                      country: { type: string, example: NO }
-                      city: { type: string, example: city }
-                      zip_code: { type: string, example: 0578 }
-                      stateCode: { type: string, example: ca }
-                      cc: { type: array, items: {} }
-                      bcc: { type: array, items: {} }
-                      tax_number: { type: string, example: 1234 }
-                  updated_on: { type: integer, example: 1755607718 }
-                  type: { type: string, example: purchase }
-                  paymentMethod: { type: string, example: MASTER }
-                  amountUnit: { type: string, example: MAJOR }
-                  errorMsg: { type: string, example: Transaction succeeded-APPROVED }
-                  redirectType: { type: string, example: POST }
-                  force_recurring: { type: boolean, example: false }
-                  created_on: { type: integer, example: 1755607495 }
-                  merchantRef: { type: string, example: 68a471c74d6f42211ab25eb3 }
-                  merchantName: { type: string, example: arunsinghal }
-                  purchase:
-                    type: object
-                    properties:
-                      currency: { type: string, example: AUD }
-                      products:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            name: { type: string, example: product name }
-                            quantity: { type: integer, example: 1 }
-                            price: { type: number, example: 1 }
-                            discount: { type: number, example: 0 }
-                            tax_percent: { type: string, example: "0.00" }
-                      total: { type: number, example: 1 }
-                      language: { type: string, example: en }
-                      notes: { type: string, example: "" }
-                      debt: { type: number, example: 0 }
-                      total_formatted: { type: number, example: 1 }
-                      expireInMin: { type: string, example: "100" }
-                      taxAmount: { type: number, example: 0 }
-                      taxPercent: { type: number, example: 0 }
-                      request_client_details: { type: array, items: {} }
-                      email_message: { type: string, example: "" }
-                  payment:
-                    type: object
-                    properties:
-                      is_outgoing: { type: boolean, example: false }
-                      payment_type: { type: string, example: PURCHASE }
-                      amount: { type: number, example: 1 }
-                      currency: { type: string, example: AUD }
-                      net_amount: { type: number, example: 1 }
-                      fee_amount: { type: number, example: 0 }
-                      pending_amount: { type: number, example: 0 }
-                      pending_unfreeze_on: { type: string, nullable: true, example: null }
-                      description: { type: string, example: "" }
-                      paid_on: { type: integer, example: 1755607682 }
-                      remote_paid_on: { type: integer, example: 1755607682 }
-                  status: { type: string, example: PAID }
-                  status_history:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        status: { type: string, example: created }
-                        timestamp: { type: integer, example: 1755607495 }
-                  viewedOn: { type: integer, example: 1755842737 }
-                  is_test: { type: boolean, example: false }
-                  brand_id: { type: string, example: 30f7ce6e-3b7e-46a2-9b50-484fc55be689 }
-                  success_redirect: { type: string, example: https://staging.paysecure.net/getResponse.jsp?issucces=true }
-                  failure_redirect: { type: string, example: https://staging.paysecure.net/getResponse.jsp?issucces=false }
-                  checkout_url: { type: string, example: https://api.choicepay.ca/payments/68a471c74d6f42211ab25eb3/ }
+                oneOf:
+                  - $ref: '#/components/schemas/PurchasePaid'
+                  - $ref: '#/components/schemas/PurchaseInProcess'
+                  - $ref: '#/components/schemas/PurchaseCancelled'
 
-        '200-PAYMENT_IN_PROCESS':
-          description: Payment is in process
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  purchaseId: { type: string, example: 689f2ac0b46305405d5dfa88 }
-                  client:
-                    type: object
-                    properties:
-                      customerId: { type: string, example: NA }
-                      email: { type: string, example: ashishm.21190@gmail.com }
-                      phone: { type: string, example: 9999999999 }
-                      full_name: { type: string, example: Alex }
-                      date_of_birth: { type: string, example: 1970-07-10 }
-                      street_address: { type: string, example: Flat 402, Larkin House, 307 Kidbrooke Park Road }
-                      country: { type: string, example: CA }
-                      city: { type: string, example: LONDON }
-                      zip_code: { type: string, example: SE3 9GU }
-                      stateCode: { type: string, example: BS }
-                      cc: { type: array, items: {} }
-                      bcc: { type: array, items: {} }
-                  updated_on: { type: integer, example: 1755261634 }
-                  type: { type: string, example: purchase }
-                  paymentMethod: { type: string, example: INTERAC-ETRANSFER }
-                  status: { type: string, example: PAYMENT_IN_PROCESS }
+        '404':
+          description: Purchase not found
 
-        '200-CANCELLED':
-          description: Purchase cancelled
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  purchaseId: { type: string, example: 68a837a5951eac3fe19a8a16 }
-                  client:
-                    type: object
-                    properties:
-                      customerId: { type: string, example: NA }
-                      email: { type: string, example: client@email.com }
-                      full_name: { type: string, example: Client Name }
-                      street_address: { type: string, example: 123 5th Ave, New York, NY 10010 }
-                      country: { type: string, example: US }
-                      city: { type: string, example: New York }
-                      zip_code: { type: string, example: 10010 }
-                      stateCode: { type: string, example: NYC }
-                  updated_on: { type: integer, example: 1755854776 }
-                  type: { type: string, example: purchase }
-                  paymentMethod: { type: string, example: QBPAYFTOPUP,VISA,PIX,INTERAC }
-                  status: { type: string, example: CANCELLED }
-                  viewedOn: { type: integer, example: 1755854923 }
-                  success_redirect: { type: string, example: https://your.success.redirect.com }
-                  failure_redirect: { type: string, example: https://your.failure.redirect.com }
-                  checkout_url: { type: string, example: https://api.choicepay.ca/payments/68a837a5951eac3fe19a8a16/ }
+components:
+  schemas:
+
+    Client:
+      type: object
+      properties:
+        customerId:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        full_name:
+          type: string
+        date_of_birth:
+          type: string
+        street_address:
+          type: string
+        country:
+          type: string
+        city:
+          type: string
+        zip_code:
+          type: string
+        stateCode:
+          type: string
+        cc:
+          type: array
+          items:
+            type: string
+        bcc:
+          type: array
+          items:
+            type: string
+        tax_number:
+          type: string
+
+    PurchaseProduct:
+      type: object
+      properties:
+        name:
+          type: string
+        quantity:
+          type: integer
+        price:
+          type: number
+        discount:
+          type: number
+        tax_percent:
+          type: string
+
+    PurchaseDetails:
+      type: object
+      properties:
+        currency:
+          type: string
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/PurchaseProduct'
+        total:
+          type: number
+        language:
+          type: string
+        notes:
+          type: string
+        debt:
+          type: number
+        total_formatted:
+          type: number
+        expireInMin:
+          type: string
+        taxAmount:
+          type: number
+        taxPercent:
+          type: number
+        request_client_details:
+          type: array
+          items:
+            type: string
+        email_message:
+          type: string
+
+    Payment:
+      type: object
+      properties:
+        is_outgoing:
+          type: boolean
+        payment_type:
+          type: string
+        amount:
+          type: number
+        currency:
+          type: string
+        net_amount:
+          type: number
+        fee_amount:
+          type: number
+        pending_amount:
+          type: number
+        pending_unfreeze_on:
+          type: string
+          nullable: true
+        description:
+          type: string
+        paid_on:
+          type: integer
+        remote_paid_on:
+          type: integer
+
+    BasePurchase:
+      type: object
+      properties:
+        purchaseId:
+          type: string
+        client:
+          $ref: '#/components/schemas/Client'
+        updated_on:
+          type: integer
+        type:
+          type: string
+        paymentMethod:
+          type: string
+        amountUnit:
+          type: string
+        errorMsg:
+          type: string
+        redirectType:
+          type: string
+        force_recurring:
+          type: boolean
+        created_on:
+          type: integer
+        merchantRef:
+          type: string
+        merchantName:
+          type: string
+        purchase:
+          $ref: '#/components/schemas/PurchaseDetails'
+        payment:
+          $ref: '#/components/schemas/Payment'
+        status:
+          type: string
+        status_history:
+          type: array
+          items:
+            type: object
+            properties:
+              status:
+                type: string
+              timestamp:
+                type: integer
+        viewedOn:
+          type: integer
+        is_test:
+          type: boolean
+        brand_id:
+          type: string
+        success_redirect:
+          type: string
+        failure_redirect:
+          type: string
+        checkout_url:
+          type: string
+
+    PurchasePaid:
+      allOf:
+        - $ref: '#/components/schemas/BasePurchase'
+        - type: object
+          properties:
+            status:
+              type: string
+              example: PAID
+
+    PurchaseInProcess:
+      allOf:
+        - $ref: '#/components/schemas/BasePurchase'
+        - type: object
+          properties:
+            status:
+              type: string
+              example: PAYMENT_IN_PROCESS
+
+    PurchaseCancelled:
+      allOf:
+        - $ref: '#/components/schemas/BasePurchase'
+        - type: object
+          properties:
+            status:
+              type: string
+              example: CANCELLED

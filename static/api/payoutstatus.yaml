@@ -1,162 +1,95 @@
 openapi: 3.0.3
+
 info:
-  title: ''
+  title: PaySecure Payout API
+  version: 1.0.0
 
 servers:
-  - url: https://api.paysecure.net    
+  - url: https://api.paysecure.net
 
 paths:
   /api/v1/getpayout/{payoutId}:
     get:
-      tags: [PAYOUT]
+      tags:
+        - PAYOUT
       summary: Get payout details by payoutId
+
       parameters:
         - in: path
           name: payoutId
           required: true
-          schema: { type: string }
+          schema:
+            type: string
+
       responses:
         '202':
-          description: Payout details retrieved successfully
+          description: Payout details response
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  payoutId: { type: string, example: 68a70d58e620f40d4930a774 }
-                  client:
-                    type: object
-                    properties:
-                      customerId: { type: string, example: NA }
-                      email: { type: string, example: ashishm.21190@gmail.com }
-                      phone: { type: string, example: +14377717874 }
-                      full_name: { type: string, example: Ashish Mistry }
-                      country: { type: string, example: CA }
-                  updated_on: { type: integer, example: 1755778392 }
-                  payoutMethod: { type: string, example: PAYOUT-INTERAC-EXPRESS }
-                  amountUnit: { type: string, example: MAJOR }
-                  amount: { type: number, example: 6 }
-                  errorMsg: { type: string, example: "" }
-                  purpose: { type: string, example: test payout }
-                  created_on: { type: integer, example: 1755778392 }
-                  merchantRef: { type: string, example: 68a70d58e620f40d4930a774 }
-                  merchantName: { type: string, example: arunsinghal }
-                  status: { type: string, example: PAID }
-                  status_history:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        status: { type: string, example: created }
-                        timestamp: { type: integer, example: 1755778392 }
-                  viewedOn: { type: integer, example: 1755840392 }
-                  currency: { type: string, example: CAD }
-                  paymentOn: { type: integer, example: 1755778408 }
-                  taxAmount: { type: number, example: 0 }
-                  taxPercent: { type: number, example: 0 }
-                  redirectType: { type: string, example: POST }
-                  surcharge: { type: number, example: 0 }
-                  success_callback: { type: string, example: https://webhook.site/... }
-                  failure_callback: { type: string, example: https://webhook.site/... }
+                oneOf:
+                  - $ref: '#/components/schemas/PayoutPaid'
+                  - $ref: '#/components/schemas/PayoutInProcess'
+                  - $ref: '#/components/schemas/PayoutError'
 
-        '202-PAYOUT_IN_PROCESS':
-          description: Payout is in process
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  payoutId: { type: string, example: 689f2f46cacb7166336f8c90 }
-                  client:
-                    type: object
-                    properties:
-                      customerId: { type: string, example: 689f2f0ad3e6553694b42004 }
-                      email: { type: string, example: ashishm.21190@gmail.com }
-                      phone: { type: string, example: 2222222222 }
-                      full_name: { type: string, example: Akshaya Singhal }
-                      date_of_birth: { type: string, example: 1995-11-27 }
-                      street_address: { type: string, example: Mansarovar Jaipur }
-                      country: { type: string, example: CA }
-                      city: { type: string, example: jaipur }
-                      zip_code: { type: string, example: 202020 }
-                      stateCode: { type: string, example: RA }
-                  updated_on: { type: integer, example: 1755262805 }
-                  payoutMethod: { type: string, example: PAYOUT-INTERAC-ETRANSFER }
-                  amountUnit: { type: string, example: MAJOR }
-                  amount: { type: number, example: 10 }
-                  errorMsg: { type: string, example: "" }
-                  purpose: { type: string, example: test }
-                  created_on: { type: integer, example: 1755262790 }
-                  merchantRef: { type: string, example: 689f2f46cacb7166336f8c90 }
-                  merchantName: { type: string, example: arunsinghal }
-                  status: { type: string, example: PAYOUT_IN_PROCESS }
-                  status_history:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        status: { type: string, example: created }
-                        timestamp: { type: integer, example: 1755262790 }
-                  viewedOn: { type: integer, example: 1755841875 }
-                  currency: { type: string, example: CAD }
-                  paymentOn: { type: integer, example: 0 }
-                  payOutDetails:
-                    type: object
-                    properties:
-                      name: { type: string, example: INTERAC E-TRANSFER }
-                      emailAddress: { type: string, example: ashishm.21190@gmail.com }
-                      secretQA: { type: string, example: q6892467166336890202 }
-                      secretAnswer: { type: string, example: a6892467166336890202 }
-                  checkout_url: { type: string, example: https://api.choicepay.ca/payout/689f2f46cacb7166336f8c90/ }
-                  taxAmount: { type: number, example: 0 }
-                  taxPercent: { type: number, example: 0 }
-                  success_redirect: { type: string, example: https://google.com/success }
-                  failure_redirect: { type: string, example: https://google.com/failure }
-                  pending_redirect: { type: string, example: https://api.choicepay.ca/merchantonboard/success }
-                  redirectType: { type: string, example: POST }
-                  surcharge: { type: number, example: 0 }
-                  success_callback: { type: string, example: "" }
-                  failure_callback: { type: string, example: "" }
+        '404':
+          description: Payout not found
 
-        '202-ERROR':
-          description: Payout failed with error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  payoutId: { type: string, example: 68871cfe6c438a7fa224d14e }
-                  client:
-                    type: object
-                    properties:
-                      customerId: { type: string, example: NA }
-                      email: { type: string, example: ashishm.21190@gmail.com }
-                      phone: { type: string, example: +14377717874 }
-                      full_name: { type: string, example: Ashish Mistry }
-                      country: { type: string, example: CA }
-                  updated_on: { type: integer, example: 1753685246 }
-                  payoutMethod: { type: string, example: PAYOUT-INTERAC }
-                  amountUnit: { type: string, example: MAJOR }
-                  amount: { type: number, example: 1 }
-                  errorMsg: { type: string, example: Insufficient Balance [-1439.25] }
-                  purpose: { type: string, example: test payout }
-                  created_on: { type: integer, example: 1753685246 }
-                  merchantRef: { type: string, example: 68871cfe6c438a7fa224d14e }
-                  merchantName: { type: string, example: arunsinghal }
-                  status: { type: string, example: ERROR }
-                  status_history:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        status: { type: string, example: error }
-                        timestamp: { type: integer, example: 1753685246 }
-                  viewedOn: { type: integer, example: 1755841936 }
-                  currency: { type: string, example: CAD }
-                  paymentOn: { type: integer, example: 0 }
-                  taxAmount: { type: number, example: 0 }
-                  taxPercent: { type: number, example: 0 }
-                  redirectType: { type: string, example: GET }
-                  surcharge: { type: number, example: 0 }
-                  success_callback: { type: string, example: https://webhook.site/... }
-                  failure_callback: { type: string, example: https://webhook.site/... }
+components:
+  schemas:
+
+    BasePayout:
+      type: object
+      properties:
+        payoutId:
+          type: string
+        amount:
+          type: number
+        currency:
+          type: string
+        status:
+          type: string
+        merchantRef:
+          type: string
+        merchantName:
+          type: string
+        created_on:
+          type: integer
+        updated_on:
+          type: integer
+
+    PayoutPaid:
+      allOf:
+        - $ref: '#/components/schemas/BasePayout'
+        - type: object
+          properties:
+            status:
+              type: string
+              example: PAID
+            paymentOn:
+              type: integer
+              example: 1755778408
+
+    PayoutInProcess:
+      allOf:
+        - $ref: '#/components/schemas/BasePayout'
+        - type: object
+          properties:
+            status:
+              type: string
+              example: PAYOUT_IN_PROCESS
+            checkout_url:
+              type: string
+              example: https://api.choicepay.ca/payout/689f2f46cacb7166336f8c90/
+
+    PayoutError:
+      allOf:
+        - $ref: '#/components/schemas/BasePayout'
+        - type: object
+          properties:
+            status:
+              type: string
+              example: ERROR
+            errorMsg:
+              type: string
+              example: Insufficient Balance [-1439.25]
