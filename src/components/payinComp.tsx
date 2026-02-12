@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 
 interface PayinCompProps {
-  src: string; 
+  src: string;
 }
 
 const PayinComp: React.FC<PayinCompProps> = ({ src }) => {
@@ -25,7 +25,7 @@ const PayinComp: React.FC<PayinCompProps> = ({ src }) => {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
-        className="w-full max-w-7xl overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
+        className="w-full overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
       >
         <iframe
           ref={iframeRef}

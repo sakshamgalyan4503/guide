@@ -10,7 +10,7 @@ export default function CustomFooter() {
 
         {/* Footer Wrapper */}
         <div className={styles.footerContainer}>
-          
+
           {/* Column 1 - Logo */}
           <div className={styles.logoSection}>
             <img
@@ -21,16 +21,16 @@ export default function CustomFooter() {
           </div>
 
           {/* Column 2 - Quick Links */}
-                <div className={`${styles.linksSection} ${styles.alignRight}`}>
-                <h4 className={styles.quickLinksTitle}>Quick Links</h4>
-                <ul>
-                  <li><Link to="/">Merchant Docs</Link></li>
-                  <li><Link to="/docs/overview">Alternative Payment Methods (APM)</Link></li>
-                  <li><Link to="/">Set-up & optimize APMs</Link></li>
-                </ul>
-                </div>
+          <div className={`${styles.linksSection} ${styles.alignRight}`}>
+            <h4 className={styles.quickLinksTitle}>Quick Links</h4>
+            <ul>
+              <li><Link to="/">Merchant Docs</Link></li>
+              <li><Link to="/docs/overview">Alternative Payment Methods (APM)</Link></li>
+              <li><Link to="/">Set-up & optimize APMs</Link></li>
+            </ul>
+          </div>
 
-                {/* Column 3 - Contact */}
+          {/* Column 3 - Contact */}
           <div className={styles.contactSection}>
             <h4 className={styles.contactTitle}>Contact Us</h4>
             <p><a href="mailto:info@paysecure.net">info@paysecure.net</a></p>

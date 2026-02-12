@@ -4,6 +4,7 @@
  * work well for content-centric websites.
  */
 
+  
 /* You can override the default Infima variables here. */
 @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
@@ -81,7 +82,7 @@ h3 {
 }
 
 .markdown {
-  padding-left: 40px;
+  padding-left: 20px;
   padding-right: 20px;
 }
 
@@ -236,6 +237,7 @@ h3 {
   margin-top: 8px;
   margin-bottom: 8px;
 }
+
 .menu__link--active {
   color: #5223BC;
   background-color: #EEE9F8;
@@ -255,6 +257,7 @@ h3 {
   .sidebar-section-label {
     color: #1F1438;
   }
+
   .clean-btn.navbar-sidebar__back {
     color: #1F1438;
   }
@@ -285,6 +288,7 @@ h3 {
   width: 16px;
   height: 16px;
 }
+
 /* Sidebar link with icons */
 .sidebar-link-with-icon {
   display: flex;

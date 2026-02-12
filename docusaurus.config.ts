@@ -48,7 +48,7 @@ const config: Config = {
   ],
 
   customFields: {
-    companyName: process.env.COMPANY_NAME,
+    companyName: process.env.COMPANY_NAME || "Paysecure",
   },
 
   themeConfig: {

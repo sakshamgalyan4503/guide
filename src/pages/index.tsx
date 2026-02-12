@@ -60,7 +60,7 @@ export default function Home(): ReactNode {
   const { siteConfig } = useDocusaurusContext();
   const [open, setOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
-   useEffect(() => {
+  useEffect(() => {
     const match = window.matchMedia("(prefers-color-scheme: dark)");
     setIsDark(match.matches);
     const listener = (e: MediaQueryListEvent) => setIsDark(e.matches);
@@ -69,9 +69,9 @@ export default function Home(): ReactNode {
   }, []);
 
   const handleClick = () => {
-    setOpen(true); 
+    setOpen(true);
   };
-  
+
   return (
     <Layout
       title={siteConfig.title}
@@ -90,7 +90,7 @@ export default function Home(): ReactNode {
             <div className={styles.quickDocsGrid}>
               <Link to='https://docs.paysecure.net/merchantguide/' className={styles.docs}>
                 <div className={styles.docsHeader}>
-                  <img src="/img/nohoverprofile.svg" alt="" className={`${styles.docsIcon} ${styles.activedocsIcon1}` } />
+                  <img src="/img/nohoverprofile.svg" alt="" className={`${styles.docsIcon} ${styles.activedocsIcon1}`} />
                   <img src="/img/nohoverarrow.svg" alt="" className={styles.arrowIcon} />
                 </div>
                 <div className={styles.docsText}>
@@ -101,7 +101,7 @@ export default function Home(): ReactNode {
 
               <Link to='/docs/overview' className={styles.docs}>
                 <div className={styles.docsHeader}>
-                  <img src="/img/wallet.svg" alt="" className={`${styles.docsIcon}  ${styles.activedocsIcon2}` } />
+                  <img src="/img/wallet.svg" alt="" className={`${styles.docsIcon}  ${styles.activedocsIcon2}`} />
                   <img src="/img/nohoverarrow.svg" alt="" className={styles.arrowIcon} />
                 </div>
                 <div className={styles.docsText}>
@@ -112,7 +112,7 @@ export default function Home(): ReactNode {
 
               <Link to='/' className={styles.docs}>
                 <div className={styles.docsHeader}>
-                  <img src="/img/api.svg" alt="" className={`${styles.docsIcon}  ${styles.activedocsIcon3}` } />
+                  <img src="/img/api.svg" alt="" className={`${styles.docsIcon}  ${styles.activedocsIcon3}`} />
                   <img src="/img/nohoverarrow.svg" alt="" className={styles.arrowIcon} />
                 </div>
                 <div className={styles.docsText}>

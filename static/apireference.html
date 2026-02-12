@@ -78,21 +78,21 @@
       }
     });
 
-    document.addEventListener('DOMContentLoaded', function(){
+    document.addEventListener('DOMContentLoaded', function () {
       setTimeout(() => {
-      const clickable = document.querySelector(".sl-flex.sl-justify-between.sl-items-center.sl-mx-auto.sl-px-2.sl-py-4.sl-text-current")
-      if (clickable) {
-        clickable.click();
-      }
+        const clickable = document.querySelector(".sl-flex.sl-justify-between.sl-items-center.sl-mx-auto.sl-px-2.sl-py-4.sl-text-current")
+        if (clickable) {
+          clickable.click();
+        }
       }, 550);
     });
-    document.addEventListener('DOMContentLoaded', function(){
+    document.addEventListener('DOMContentLoaded', function () {
       setTimeout(() => {
-      const clickable = document.querySelector(".sl-flex.sl-items-center.sl-text-lg.sl-mx-auto.sl-p-2.sl-text-current.sl-cursor-pointer")
-      if (clickable) {
-        clickable.click();
-      }
-      },550);
+        const clickable = document.querySelector(".sl-flex.sl-items-center.sl-text-lg.sl-mx-auto.sl-p-2.sl-text-current.sl-cursor-pointer")
+        if (clickable) {
+          clickable.click();
+        }
+      }, 550);
     });
     // Auto Height Script
     const container = document.querySelector('.api-container');
@@ -132,6 +132,10 @@
           style.textContent = `
             * {
               font-family: 'DM Sans', sans-serif !important;
+            }
+            
+            .sl-sidebar {
+              display: none !important;
             }
 
             .sl-flex.sl-justify-end.sl-items-center.sl-px-1.sl-py-3 {
