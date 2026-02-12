@@ -27,6 +27,7 @@
     "buffer": "^6.0.3",
     "dotenv": "^17.2.0",
     "framer-motion": "^12.23.12",
+    "httpsnippet-lite": "^3.0.5",
     "js-yaml": "^4.1.1",
     "lucide-react": "^0.541.0",
     "prism-react-renderer": "^2.3.0",

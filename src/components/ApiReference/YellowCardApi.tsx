@@ -91,10 +91,35 @@ export default function YellowCardApi({ yamlUrl }: Props) {
   const [response, setResponse] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [language, setLanguage] = useState("curl");
-
   // Dynamic parameters
   const [pathParams, setPathParams] = useState<Record<string, string>>({});
   const [queryParams, setQueryParams] = useState<Record<string, string>>({});
+
+  const [generatedCode, setGeneratedCode] = useState("");
+
+  const getFullUrl = () => {
+    let url = `${server}${currentPath}`;
+    // Replace path params
+    Object.entries(pathParams).forEach(([key, val]) => {
+      url = url.replace(`{${key}}`, val);
+    });
+    // Append query params
+    const q = new URLSearchParams();
+    Object.entries(queryParams).forEach(([key, val]) => {
+      if (val) q.append(key, val);
+    });
+    const qs = q.toString();
+    return qs ? `${url}?${qs}` : url;
+  };
+
+  // Update generated code when inputs change
+  useEffect(() => {
+    const updateCode = async () => {
+      const code = await generateCode(currentMethod, getFullUrl(), token, body, language);
+      setGeneratedCode(code);
+    };
+    updateCode();
+  }, [currentMethod, currentPath, server, pathParams, queryParams, token, body, language]);
 
   const updateExamplesFromSpec = useCallback((parsedSpec: any, path: string, method: string) => {
     const endpoint = parsedSpec.paths[path][method];
@@ -166,20 +191,6 @@ export default function YellowCardApi({ yamlUrl }: Props) {
 
   const endpoint = spec.paths[currentPath][currentMethod];
 
-  const getFullUrl = () => {
-    let url = `${server}${currentPath}`;
-    // Replace path params
-    Object.entries(pathParams).forEach(([key, val]) => {
-      url = url.replace(`{${key}}`, val);
-    });
-    // Append query params
-    const q = new URLSearchParams();
-    Object.entries(queryParams).forEach(([key, val]) => {
-      if (val) q.append(key, val);
-    });
-    const qs = q.toString();
-    return qs ? `${url}?${qs}` : url;
-  };
 
   const execute = async () => {
     setLoading(true);
@@ -402,7 +413,12 @@ export default function YellowCardApi({ yamlUrl }: Props) {
                 options={[
                   { label: 'cURL', value: 'curl' },
                   { label: 'Node.js', value: 'node' },
-                  { label: 'Python', value: 'python' }
+                  { label: 'Python', value: 'python' },
+                  { label: 'Go', value: 'go' },
+                  { label: 'PHP', value: 'php' },
+                  { label: 'Ruby', value: 'ruby' },
+                  { label: 'Java', value: 'java' },
+                  { label: 'C#', value: 'csharp' }
                 ]}
                 value={language}
                 onChange={setLanguage}
@@ -413,11 +429,11 @@ export default function YellowCardApi({ yamlUrl }: Props) {
           <div className="yc-section-header" style={{ marginTop: '8px', borderBottom: '1px solid var(--yc-border)', paddingBottom: '8px', marginBottom: '8px' }}>
             <div className="yc-body-title" style={{ fontSize: '14px', color: 'var(--yc-purple)', fontWeight: 700 }}>Generated Code</div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <CopyButton text={generateCode(currentMethod, getFullUrl(), token, body, language)} />
+              <CopyButton text={generatedCode} />
             </div>
           </div>
           <pre className="yc-code" style={{ maxHeight: '200px', margin: 0 }}>
-            {generateCode(currentMethod, getFullUrl(), token, body, language)}
+            {generatedCode}
           </pre>
         </div>
       </div>
