@@ -7,6 +7,7 @@ import SchemaRenderer from "./SchemaRenderer";
 import { generateCode } from "./GenerateLanguage";
 import DropDown from "./DropDown";
 import "./YellowCardApi.css";
+import { Check, CopyIcon, TicketCheckIcon } from "lucide-react";
 
 interface Props {
   yamlUrl: string;
@@ -75,7 +76,7 @@ const CopyButton = ({ text }: { text: string }) => {
 
   return (
     <button className="yc-copy-btn" onClick={handleCopy}>
-      {copied ? "COPIED!" : "COPY"}
+      {copied ? <Check width={12} height={12} /> : <CopyIcon width={12} height={12} />}
     </button>
   );
 };
@@ -89,11 +90,12 @@ export default function YellowCardApi({ yamlUrl }: Props) {
   const [body, setBody] = useState("{}");
   const [exampleResponse, setExampleResponse] = useState("{}");
   const [response, setResponse] = useState<any>(null);
+  const [statusCode, setStatusCode] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [language, setLanguage] = useState("curl");
-  // Dynamic parameters
   const [pathParams, setPathParams] = useState<Record<string, string>>({});
   const [queryParams, setQueryParams] = useState<Record<string, string>>({});
+  const [exampleStatus, setExampleStatus] = useState<string>("200");
 
   const [generatedCode, setGeneratedCode] = useState("");
 
@@ -151,6 +153,7 @@ export default function YellowCardApi({ yamlUrl }: Props) {
 
     // Response Example - scan for any successful response
     const successCode = Object.keys(endpoint.responses || {}).find(code => code.startsWith("2"));
+    setExampleStatus(successCode || "200");
     const resSchema = endpoint.responses?.[successCode || "200"]?.content?.["application/json"]?.schema;
 
     if (resSchema) {
@@ -195,6 +198,7 @@ export default function YellowCardApi({ yamlUrl }: Props) {
   const execute = async () => {
     setLoading(true);
     setResponse(null);
+    setStatusCode(null);
     try {
       let data = undefined;
       if (body && body !== "{}") {
@@ -216,8 +220,10 @@ export default function YellowCardApi({ yamlUrl }: Props) {
       });
 
       setResponse(res.data);
+      setStatusCode(res.status);
     } catch (err: any) {
       setResponse(err.response?.data || err.message);
+      setStatusCode(err.response?.status || 500);
     } finally {
       setLoading(false);
     }
@@ -353,13 +359,80 @@ export default function YellowCardApi({ yamlUrl }: Props) {
             </div>
           )}
 
+          <div className="api-container">
+            <div className="api-header">
+              <span className={`method ${currentMethod.toLowerCase()}`}>{currentMethod}</span>
+              <span className="endpoint">{currentPath}</span>
+
+              <div className="header-actions">
+                <div style={{ width: '100%' }}>
+                  <DropDown
+                    options={[
+                      { label: 'cURL', value: 'curl' },
+                      { label: 'Node.js', value: 'node' },
+                      { label: 'Python', value: 'python' },
+                      { label: 'Go', value: 'go' },
+                      { label: 'PHP', value: 'php' },
+                      { label: 'Ruby', value: 'ruby' },
+                      { label: 'Java', value: 'java' },
+                      { label: 'C#', value: 'csharp' }
+                    ]}
+                    value={language}
+                    onChange={setLanguage}
+                  />
+                </div>
+                <CopyButton text={generatedCode} />
+              </div>
+            </div>
+
+            <pre className="yc-code" style={{ maxHeight: '200px', margin: 0 }}>
+              {generatedCode}
+            </pre>
+
+            <div className="api-footer">
+              <button
+                onClick={execute}
+                className="try-btn"
+                disabled={loading}
+                style={{ cursor: loading ? 'not-allowed' : 'pointer' }}
+              >
+                {loading ? 'Executing...' : '▶ Try it'}
+              </button>
+            </div>
+          </div>
+
+          {response && (
+            <>
+              <div className="api-container">
+                <div className="api-header">
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <span className="yc-response-title" style={{ fontSize: '14px', color: 'var(--yc-purple)', fontWeight: 700, marginTop: 0, marginRight: '8px' }}>Actual Response</span>
+                    <span className={`actual-response ${String(statusCode || 200).startsWith('2') ? 'success' : 'error'}`}>{statusCode || '200'}</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <span>application/json</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', height: '100%', justifyContent: 'center' }}>
+                      <CopyButton text={JSON.stringify(response, null, 2)} />
+                    </div>
+                  </div>
+                </div>
+
+                <pre className="yc-code" style={{ maxHeight: '200px', margin: 0 }}>
+                  {JSON.stringify(response, null, 2)}
+                </pre>
+              </div>
+            </>
+          )}
+
           <div className="yc-playground-grid" style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px' }}>
-            <div>
-              <div className="yc-section-header" style={{ borderBottom: '1px solid var(--yc-border)', paddingBottom: '12px', marginBottom: '16px' }}>
-                <div className="yc-body-title" style={{ fontSize: '14px', color: 'var(--yc-purple)', fontWeight: 700 }}>Request Body JSON</div>
+            <div className="api-container">
+              <div className="api-header">
+                <span className="yc-response-title" style={{ fontSize: '14px', color: 'var(--yc-purple)', fontWeight: 700, marginTop: 0 }}>Example Request Body</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <CopyButton text={body} />
                   <span className="yc-schema-type">application/json</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', height: '100%', justifyContent: 'center' }}>
+                    <CopyButton text={body} />
+                  </div>
                 </div>
               </div>
               <textarea
@@ -367,74 +440,36 @@ export default function YellowCardApi({ yamlUrl }: Props) {
                 placeholder="Request Body JSON"
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
+                style={{
+                  border: 'none',
+                  borderTop: 'none',
+                  borderTopLeftRadius: 0,
+                  borderTopRightRadius: 0,
+                  minHeight: '200px',
+                  width: '100%',
+                  resize: 'vertical'
+                }}
               />
             </div>
 
-            <div>
-              <div className="yc-section-header" style={{ borderBottom: '1px solid var(--yc-border)', paddingBottom: '12px', marginBottom: '16px' }}>
-                <div className="yc-body-title" style={{ fontSize: '14px', color: 'var(--yc-purple)', fontWeight: 700 }}>Example Response JSON</div>
+            <div className="api-container">
+              <div className="api-header">
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <span className="yc-response-title" style={{ fontSize: '14px', color: 'var(--yc-purple)', fontWeight: 700, marginTop: 0, marginRight: '8px' }}>Example Response</span>
+                  <span className={`actual-response ${String(exampleStatus).startsWith('2') ? 'success' : 'error'}`}>{exampleStatus}</span>
+                </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <CopyButton text={exampleResponse} />
                   <span className="yc-schema-type">application/json</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', height: '100%', justifyContent: 'center' }}>
+                    <CopyButton text={exampleResponse} />
+                  </div>
                 </div>
               </div>
-              <pre className="yc-code" style={{ maxHeight: '200px', margin: 0 }}>
+              <pre className="yc-code" style={{ maxHeight: '200px', margin: 0, borderTopLeftRadius: 0, borderTopRightRadius: 0, borderTop: 'none' }}>
                 {exampleResponse}
               </pre>
             </div>
           </div>
-
-          <button
-            className="yc-button"
-            onClick={execute}
-            disabled={loading}
-          >
-            {loading ? "Sending..." : "Send API Request"}
-          </button>
-
-          {response && (
-            <>
-              <div className="yc-section-header" style={{ marginTop: '40px', borderBottom: '1px solid var(--yc-border)', paddingBottom: '12px', marginBottom: '16px' }}>
-                <div className="yc-response-title" style={{ fontSize: '14px', color: 'var(--yc-purple)', fontWeight: 700, marginTop: 0 }}>Actual Response</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <CopyButton text={JSON.stringify(response, null, 2)} />
-                  <span className="yc-schema-type">application/json</span>
-                </div>
-              </div>
-              <pre className="yc-code" style={{ maxHeight: '200px', margin: 0 }}>
-                {JSON.stringify(response, null, 2)}
-              </pre>
-            </>
-          )}
-
-          <div style={{ marginTop: '8px' }}>
-            <div className="yc-section-header" style={{ borderBottom: '1px solid var(--yc-border)' }}>
-              <DropDown
-                options={[
-                  { label: 'cURL', value: 'curl' },
-                  { label: 'Node.js', value: 'node' },
-                  { label: 'Python', value: 'python' },
-                  { label: 'Go', value: 'go' },
-                  { label: 'PHP', value: 'php' },
-                  { label: 'Ruby', value: 'ruby' },
-                  { label: 'Java', value: 'java' },
-                  { label: 'C#', value: 'csharp' }
-                ]}
-                value={language}
-                onChange={setLanguage}
-              />
-            </div>
-          </div>
-
-          <div className="yc-section-header" style={{ marginTop: '8px', borderBottom: '1px solid var(--yc-border)', paddingBottom: '8px', marginBottom: '8px' }}>
-            <div className="yc-body-title" style={{ fontSize: '14px', color: 'var(--yc-purple)', fontWeight: 700 }}>Generated Code</div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <CopyButton text={generatedCode} />
-            </div>
-          </div>
-          <pre className="yc-code" style={{ maxHeight: '200px', margin: 0 }}>
-            {generatedCode}
-          </pre>
         </div>
       </div>
     </div>
