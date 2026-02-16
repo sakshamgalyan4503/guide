@@ -69,7 +69,7 @@ export default function SchemaRenderer({
                                     {type}
                                 </span>
                                 {(resolvedSchema.required || []).includes(key) && (
-                                    <span className="yc-required">REQUIRED</span>
+                                    <span className="yc-required">*</span>
                                 )}
                             </div>
 

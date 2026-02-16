@@ -279,7 +279,7 @@ export default function YellowCardApi({ yamlUrl }: Props) {
                       <div className="yc-schema-meta">
                         <span className="yc-schema-name">{resolved.name}</span>
                         <span className="yc-schema-type yc-type-any">{resolved.in}</span>
-                        {resolved.required && <span className="yc-required">REQUIRED</span>}
+                        {resolved.required && <span className="yc-required">*</span>}
                       </div>
                       {resolved.description && <div className="yc-schema-desc">{resolved.description}</div>}
                     </div>
