@@ -385,9 +385,25 @@ export default function YellowCardApi({ yamlUrl }: Props) {
               </div>
             </div>
 
-            <pre className="yc-code" style={{ maxHeight: '200px', margin: 0 }}>
-              {generatedCode}
-            </pre>
+            <textarea
+              className="yc-code"
+              value={generatedCode}
+              onChange={(e) => setGeneratedCode(e.target.value)}
+              spellCheck={false}
+              style={{
+                maxHeight: '400px',
+                minHeight: '250px',
+                margin: 0,
+                width: '100%',
+                resize: 'none',
+                border: 'none',
+                outline: 'none',
+                fontFamily: 'monospace',
+                background: 'white',
+                color: 'var(--yc-text)',
+                padding: '12px'
+              }}
+            />
 
             <div className="api-footer">
               <button
@@ -424,7 +440,7 @@ export default function YellowCardApi({ yamlUrl }: Props) {
             </>
           )}
 
-          <div className="yc-playground-grid" style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px' }}>
+          <div className="yc-playground-grid" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div className="api-container">
               <div className="api-header">
                 <span className="yc-response-title" style={{ fontSize: '14px', color: 'var(--yc-purple)', fontWeight: 700, marginTop: 0 }}>Example Request Body</span>
@@ -465,9 +481,21 @@ export default function YellowCardApi({ yamlUrl }: Props) {
                   </div>
                 </div>
               </div>
-              <pre className="yc-code" style={{ maxHeight: '200px', margin: 0, borderTopLeftRadius: 0, borderTopRightRadius: 0, borderTop: 'none' }}>
-                {exampleResponse}
-              </pre>
+              <textarea
+                className="yc-textarea-dark"
+                placeholder="Example Response"
+                value={exampleResponse}
+                onChange={(e) => setExampleResponse(e.target.value)}
+                style={{
+                  border: 'none',
+                  borderTop: 'none',
+                  borderTopLeftRadius: 0,
+                  borderTopRightRadius: 0,
+                  minHeight: '200px',
+                  width: '100%',
+                  resize: 'vertical'
+                }}
+              />
             </div>
           </div>
         </div>
