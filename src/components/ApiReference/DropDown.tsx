@@ -15,6 +15,7 @@ interface DropDownProps<T> {
     placeholder?: string;
     label?: string;
     disabled?: boolean;
+    variant?: 'default' | 'response';
 }
 
 export function DropDown<T>({
@@ -25,7 +26,8 @@ export function DropDown<T>({
     style,
     placeholder = "Select...",
     label,
-    disabled = false
+    disabled = false,
+    variant = 'default'
 }: DropDownProps<T>) {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -54,7 +56,7 @@ export function DropDown<T>({
 
     return (
         <div
-            className={`yc-dropdown-container ${disabled ? 'yc-disabled' : ''} ${className}`}
+            className={`yc-dropdown-container ${disabled ? 'yc-disabled' : ''} ${variant === 'response' ? `variant-response variant-response-${String(value).startsWith('2') ? 'success' : 'error'}` : ''} ${className}`}
             style={style}
             ref={containerRef}
         >

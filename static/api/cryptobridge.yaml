@@ -4,7 +4,6 @@ info:
   version: 1.0.0
 
 servers:
-  - url: https://api.paysecure.net
   - url: https://staging.paysecure.net
   - url: https://app.paysecure.net
 
@@ -227,7 +226,7 @@ paths:
                           address:
                             description: The address to send the asset to.
                             type: string
-                            example: 0xc4db7bBB898B98D15be823454d1dff6C308BC9A4
+                            example: "0xc4db7bBB898B98D15be823454d1dff6C308BC9A4"
 
       responses:
         "200":

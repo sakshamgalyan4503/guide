@@ -459,7 +459,27 @@ export default function YellowCardApi({ yamlUrl }: Props) {
               <div className="api-header">
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <span className="yc-response-title" style={{ fontSize: '14px', color: 'var(--yc-purple)', fontWeight: 700, marginTop: 0, marginRight: '8px' }}>Example Response</span>
-                  <span className={`actual-response ${String(exampleStatus).startsWith('2') ? 'success' : 'error'}`}>{exampleStatus}</span>
+                  {endpoint.responses && Object.keys(endpoint.responses).length > 1 ? (
+                    <div style={{ width: '80px' }}>
+                      <DropDown
+                        options={Object.keys(endpoint.responses).map(code => ({ label: code, value: code }))}
+                        value={exampleStatus}
+                        variant="response"
+                        onChange={(newStatus) => {
+                          setExampleStatus(newStatus);
+                          const resSchema = endpoint.responses[newStatus]?.content?.["application/json"]?.schema;
+                          if (resSchema) {
+                            const example = generateExampleFromSchema(resSchema, spec);
+                            setExampleResponse(JSON.stringify(example, null, 2));
+                          } else {
+                            setExampleResponse("{}");
+                          }
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <span className={`actual-response ${String(exampleStatus).startsWith('2') ? 'success' : 'error'}`}>{exampleStatus}</span>
+                  )}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <span className="yc-schema-type">application/json</span>
