@@ -63,40 +63,44 @@ export default function SchemaRenderer({
 
                     return (
                         <div key={key} className="yc-schema-card">
-                            <div className="yc-schema-meta">
-                                <span className="yc-schema-name">{key}</span>
-                                <span className={`yc-schema-type yc-type-${type}`}>
-                                    {type}
-                                </span>
-                                {(resolvedSchema.required || []).includes(key) && (
-                                    <span className="yc-required">*</span>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                <div className="yc-schema-meta" style={{ marginBottom: 0 }}>
+                                    <span className="yc-schema-name">{key}</span>
+                                    <span className={`yc-schema-type yc-type-${type}`}>
+                                        {type}
+                                    </span>
+                                    {(resolvedSchema.required || []).includes(key) && (
+                                        <span className="yc-required">*</span>
+                                    )}
+                                </div>
+
+                                {(resolvedValue.example !== undefined || resolvedValue.default !== undefined || resolvedValue.enum) && (
+                                    <div style={{ display: 'flex', gap: '12px', textAlign: 'right', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                                        {resolvedValue.example !== undefined && (
+                                            <div className="yc-schema-info-item" style={{ alignItems: 'flex-end' }}>
+                                                {/* <span className="yc-schema-info-label">Example</span> */}
+                                                <span className="yc-schema-info-value">{JSON.stringify(resolvedValue.example)}</span>
+                                            </div>
+                                        )}
+                                        {resolvedValue.default !== undefined && (
+                                            <div className="yc-schema-info-item" style={{ alignItems: 'flex-end' }}>
+                                                <span className="yc-schema-info-label">Default</span>
+                                                <span className="yc-schema-info-value">{String(resolvedValue.default)}</span>
+                                            </div>
+                                        )}
+                                        {resolvedValue.enum && (
+                                            <div className="yc-schema-info-item" style={{ alignItems: 'flex-end' }}>
+                                                <span className="yc-schema-info-label">Enum</span>
+                                                <span className="yc-schema-info-value">{resolvedValue.enum.join(", ")}</span>
+                                            </div>
+                                        )}
+                                    </div>
                                 )}
                             </div>
 
                             {resolvedValue.description && (
-                                <div style={{ fontSize: '12px',}}><span style={{ fontWeight: 'bold' }}>Description:</span> {resolvedValue.description}</div>
-                            )}
-
-                            {(resolvedValue.example !== undefined || resolvedValue.default !== undefined || resolvedValue.enum) && (
-                                <div className="yc-schema-info-grid">
-                                    {resolvedValue.example !== undefined && (
-                                        <div className="yc-schema-info-item">
-                                            <span className="yc-schema-info-label">Example</span>
-                                            <span className="yc-schema-info-value">{JSON.stringify(resolvedValue.example)}</span>
-                                        </div>
-                                    )}
-                                    {resolvedValue.default !== undefined && (
-                                        <div className="yc-schema-info-item">
-                                            <span className="yc-schema-info-label">Default</span>
-                                            <span className="yc-schema-info-value">{String(resolvedValue.default)}</span>
-                                        </div>
-                                    )}
-                                    {resolvedValue.enum && (
-                                        <div className="yc-schema-info-item">
-                                            <span className="yc-schema-info-label">Enum</span>
-                                            <span className="yc-schema-info-value">{resolvedValue.enum.join(", ")}</span>
-                                        </div>
-                                    )}
+                                <div style={{ color: 'var(--yc-text-muted)', fontSize: '11px', marginBottom: '7px', marginTop: '7px' }}>
+                                    {resolvedValue.description}
                                 </div>
                             )}
 

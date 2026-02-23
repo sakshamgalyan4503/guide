@@ -17,7 +17,7 @@
 .yc-container {
     display: flex;
     flex-direction: column;
-    font-family: 'Inter', -apple-system, sans-serif;
+    font-family: system-ui, 'DM Sans', sans-serif;
     font-size: 14px;
     color: var(--yc-text);
     background: var(--yc-bg-light);
@@ -41,7 +41,7 @@
 /* SECTION: DOCS (Column 1) */
 .yc-docs {
     flex: 1;
-    padding: 40px;
+    padding: 24px;
     border-right: 1px solid var(--yc-border);
     overflow-y: auto;
     background: white;
@@ -402,9 +402,9 @@
 
 .yc-schema-card {
     background: white;
-    border: 1px solid var(--yc-border);
-    border-radius: 10px;
-    padding: 16px;
+    border: 2px solid var(--yc-border);
+    border-radius: 9px;
+    padding: 10px 12px;
     transition: all 0.2s;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
@@ -446,8 +446,10 @@
 
 .yc-schema-info-value {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
+    font-size: 11px;
     color: var(--yc-purple);
+    word-break: break-all;
+    white-space: pre-wrap;
 }
 
 

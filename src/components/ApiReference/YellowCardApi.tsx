@@ -7,7 +7,9 @@ import SchemaRenderer from "./SchemaRenderer";
 import { generateCode } from "./GenerateLanguage";
 import DropDown from "./DropDown";
 import "./YellowCardApi.css";
-import { Check, CopyIcon, TicketCheckIcon } from "lucide-react";
+import { Check, CopyIcon } from "lucide-react";
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 interface Props {
   yamlUrl: string;
@@ -245,10 +247,51 @@ export default function YellowCardApi({ yamlUrl }: Props) {
 
           <p className="yc-summary">{endpoint.summary}</p>
 
+          {/* PARAMETERS SECTION (DOCS) */}
+          {(endpoint.parameters || spec.paths[currentPath].parameters) && (
+            <>
+              <div className="yc-section-header" style={{ borderBottom: '1px solid var(--yc-border)', paddingBottom: '12px', marginBottom: '16px' }}>
+                <div className="yc-body-title" style={{ fontSize: '14px', color: 'var(--yc-purple)' }}>Parameters</div>
+              </div>
+              <div className="yc-schema-properties">
+                {[...(endpoint.parameters || []), ...(spec.paths[currentPath].parameters || [])].map((p: any, i: number) => {
+                  const resolved = resolveRef(p, spec);
+                  return (
+                    <div key={i} className="yc-schema-card">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <div className="yc-schema-meta" style={{ marginBottom: 0 }}>
+                          <span className="yc-schema-name">{resolved.name}</span>
+                          <span className="yc-schema-type yc-type-any">{resolved.in}</span>
+                          {resolved.required && <span className="yc-required">*</span>}
+                        </div>
+
+                        {((resolved.in === 'path' && pathParams[resolved.name]) || (resolved.in === 'query' && queryParams[resolved.name])) && (
+                          <div style={{ display: 'flex', gap: '12px', textAlign: 'right', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                            <div className="yc-schema-info-item" style={{ alignItems: 'flex-end' }}>
+                              <span className="yc-schema-info-value">{resolved.in === 'path' ? pathParams[resolved.name] : queryParams[resolved.name]}</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      {resolved.description && (
+                        <div style={{ fontSize: '11px', marginBottom: '7px', marginTop: '7px' }}>
+                          <span style={{ fontWeight: 'bold' }}>
+                            Description: {" "}
+                          </span>
+                          {resolved.description}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
+
           {/* REQUEST BODY */}
           {endpoint.requestBody && (
             <>
-              <div className="yc-section-header" style={{ borderBottom: '1px solid var(--yc-border)', paddingBottom: '12px', marginBottom: '16px' }}>
+              <div className="yc-section-header" style={{ borderBottom: '1px solid var(--yc-border)', paddingBottom: '12px', marginBottom: '16px', marginTop: 24 }}>
                 <div className="yc-body-title" style={{ fontSize: '14px', color: 'var(--yc-purple)' }}>Request Body JSON</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <span className="yc-schema-type">application/json</span>
@@ -262,30 +305,6 @@ export default function YellowCardApi({ yamlUrl }: Props) {
                     .schema
                 }
               />
-            </>
-          )}
-
-          {/* PARAMETERS SECTION (DOCS) */}
-          {(endpoint.parameters || spec.paths[currentPath].parameters) && (
-            <>
-              <div className="yc-section-header" style={{ marginTop: 40, borderBottom: '1px solid var(--yc-border)', paddingBottom: '12px', marginBottom: '16px' }}>
-                <div className="yc-body-title" style={{ fontSize: '14px', color: 'var(--yc-purple)' }}>Parameters</div>
-              </div>
-              <div className="yc-schema-properties">
-                {[...(endpoint.parameters || []), ...(spec.paths[currentPath].parameters || [])].map((p: any, i: number) => {
-                  const resolved = resolveRef(p, spec);
-                  return (
-                    <div key={i} className="yc-schema-card">
-                      <div className="yc-schema-meta">
-                        <span className="yc-schema-name">{resolved.name}</span>
-                        <span className="yc-schema-type yc-type-any">{resolved.in}</span>
-                        {resolved.required && <span className="yc-required">*</span>}
-                      </div>
-                      {resolved.description && <div className="yc-schema-desc">{resolved.description}</div>}
-                    </div>
-                  );
-                })}
-              </div>
             </>
           )}
 
@@ -385,25 +404,20 @@ export default function YellowCardApi({ yamlUrl }: Props) {
               </div>
             </div>
 
-            <textarea
-              className="yc-code"
-              value={generatedCode}
-              onChange={(e) => setGeneratedCode(e.target.value)}
-              spellCheck={false}
-              style={{
-                maxHeight: '400px',
-                minHeight: '250px',
+            <SyntaxHighlighter
+              language="bash"
+              style={oneDark}
+              customStyle={{
+                maxHeight: '300px',
+                minHeight: '200px',
                 margin: 0,
-                width: '100%',
-                resize: 'none',
-                border: 'none',
-                outline: 'none',
+                padding: '16px',
                 fontFamily: 'monospace',
-                background: 'white',
-                color: 'var(--yc-text)',
-                padding: '12px'
+                borderRadius: '6px'
               }}
-            />
+            >
+              {generatedCode}
+            </SyntaxHighlighter>
 
             <div className="api-footer">
               <button
@@ -441,33 +455,6 @@ export default function YellowCardApi({ yamlUrl }: Props) {
           )}
 
           <div className="yc-playground-grid" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div className="api-container">
-              <div className="api-header">
-                <span className="yc-response-title" style={{ fontSize: '14px', color: 'var(--yc-purple)', fontWeight: 700, marginTop: 0 }}>Example Request Body</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <span className="yc-schema-type">application/json</span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', height: '100%', justifyContent: 'center' }}>
-                    <CopyButton text={body} />
-                  </div>
-                </div>
-              </div>
-              <textarea
-                className="yc-textarea-dark"
-                placeholder="Request Body JSON"
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
-                style={{
-                  border: 'none',
-                  borderTop: 'none',
-                  borderTopLeftRadius: 0,
-                  borderTopRightRadius: 0,
-                  minHeight: '200px',
-                  width: '100%',
-                  resize: 'vertical'
-                }}
-              />
-            </div>
-
             <div className="api-container">
               <div className="api-header">
                 <div style={{ display: 'flex', alignItems: 'center' }}>
