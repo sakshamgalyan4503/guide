@@ -74,7 +74,7 @@ export default function SchemaRenderer({
                             </div>
 
                             {resolvedValue.description && (
-                                <div className="yc-schema-desc">{resolvedValue.description}</div>
+                                <div style={{ fontSize: '12px',}}><span style={{ fontWeight: 'bold' }}>Description:</span> {resolvedValue.description}</div>
                             )}
 
                             {(resolvedValue.example !== undefined || resolvedValue.default !== undefined || resolvedValue.enum) && (
