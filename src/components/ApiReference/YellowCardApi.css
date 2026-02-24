@@ -41,7 +41,7 @@
 /* SECTION: DOCS (Column 1) */
 .yc-docs {
     flex: 1;
-    padding: 24px;
+    padding: 16px;
     border-right: 1px solid var(--yc-border);
     overflow-y: auto;
     background: white;
@@ -51,7 +51,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 24px;
+    margin-bottom: 12px;
 }
 
 .yc-method {
@@ -93,9 +93,9 @@
 
 .yc-summary {
     font-size: 16px;
-    line-height: 1.6;
+    line-height: 1.4;
     color: var(--yc-text-muted);
-    margin-bottom: 32px;
+    margin-bottom: 18px;
 }
 
 .yc-body-header {
@@ -361,7 +361,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 12px;
+    padding: 10px 14px;
     background: var(--yc-bg-muted);
     cursor: pointer;
     user-select: none;
@@ -404,7 +404,7 @@
     background: white;
     border: 2px solid var(--yc-border);
     border-radius: 9px;
-    padding: 6px 10px;
+    padding: 10px 14px;
     transition: all 0.2s;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
