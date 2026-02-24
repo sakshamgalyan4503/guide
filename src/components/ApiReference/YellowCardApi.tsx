@@ -404,20 +404,24 @@ export default function YellowCardApi({ yamlUrl }: Props) {
               </div>
             </div>
 
-            <SyntaxHighlighter
-              language="bash"
-              style={oneDark}
-              customStyle={{
-                maxHeight: '300px',
-                minHeight: '200px',
-                margin: 0,
-                padding: '16px',
-                fontFamily: 'monospace',
-                borderRadius: '6px'
-              }}
-            >
-              {generatedCode}
-            </SyntaxHighlighter>
+            <div className="api-body">
+              <SyntaxHighlighter
+                language="bash"
+                style={oneDark}
+                customStyle={{
+                  maxHeight: '300px',
+                  minHeight: '200px',
+                  margin: 0,
+                  padding: '16px',
+                  fontFamily: 'monospace',
+                  fontSize: '12px',
+                  borderRadius: '6px'
+                }}
+                codeTagProps={{ style: { fontFamily: 'monospace' } }}
+              >
+                {generatedCode}
+              </SyntaxHighlighter>
+            </div>
 
             <div className="api-footer">
               <button
