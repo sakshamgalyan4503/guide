@@ -361,7 +361,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 16px;
+    padding: 8px 12px;
     background: var(--yc-bg-muted);
     cursor: pointer;
     user-select: none;
@@ -388,7 +388,7 @@
 }
 
 .yc-accordion-content {
-    padding: 16px;
+    padding: 12px;
     border-top: 1px solid var(--yc-border);
     background: white;
 }
@@ -404,7 +404,7 @@
     background: white;
     border: 2px solid var(--yc-border);
     border-radius: 9px;
-    padding: 10px 12px;
+    padding: 6px 10px;
     transition: all 0.2s;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
