@@ -63,7 +63,7 @@ export default function SchemaRenderer({
 
                     return (
                         <div key={key} className="yc-schema-card">
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
                                 <div className="yc-schema-meta" style={{ marginBottom: 0 }}>
                                     <span className="yc-schema-name">{key}</span>
                                     <span className={`yc-schema-type yc-type-${type}`}>
