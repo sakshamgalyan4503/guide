@@ -56,24 +56,29 @@ export function DropDown<T>({
 
     return (
         <div
-            className={`yc-dropdown-container ${disabled ? 'yc-disabled' : ''} ${variant === 'response' ? `variant-response variant-response-${String(value).startsWith('2') ? 'success' : 'error'}` : ''} ${className}`}
+            className={`relative w-full font-sans flex flex-col gap-1 ${disabled ? 'opacity-60 pointer-events-none' : ''} ${variant === 'response' ? 'w-auto inline-block' : ''} ${className}`}
             style={style}
             ref={containerRef}
         >
             {label && (
-                <label className="yc-dropdown-label">
+                <label className="text-[11px] font-bold uppercase text-slate-500 tracking-wider">
                     {label}
                 </label>
             )}
 
             <div
-                className={`yc-dropdown-trigger ${isOpen ? 'open' : ''}`}
+                className={`flex items-center justify-between cursor-pointer select-none transition-all duration-200 
+                ${variant === 'response' 
+                    ? `px-2 py-[2px] rounded-xl text-[11px] font-bold border border-transparent 
+                        ${String(value).startsWith('2') ? 'bg-[#e6f6f4] text-teal-600 border-teal-600/20' : 'bg-red-50 text-red-500 border-red-500/20'}`
+                    : `bg-white border border-solid border-slate-200 px-3 py-2.5 rounded-lg hover:border-slate-300 shadow-sm ${isOpen ? 'border-purple-900 ring-4 ring-purple-900/10' : ''}`
+                }`}
                 onClick={() => !disabled && setIsOpen(!isOpen)}
             >
-                <span className={`yc-dropdown-value ${!selectedOption ? 'placeholder' : ''}`}>
+                <span className={`text-[13px] font-medium whitespace-nowrap overflow-hidden text-ellipsis ${variant === 'response' ? 'text-[11px] m-0 mr-1' : 'ml-1 mr-2 text-slate-800'} ${!selectedOption ? 'text-slate-500' : ''}`}>
                     {selectedOption ? selectedOption.label : placeholder}
                 </span>
-                <span className="yc-dropdown-arrow">
+                <span className={`flex items-center text-slate-500 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''} ${variant === 'response' ? '-mt-[1px]' : ''}`}>
                     <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -81,16 +86,18 @@ export function DropDown<T>({
             </div>
 
             {isOpen && (
-                <div className="yc-dropdown-menu">
+                <div className={`absolute left-0 mt-1 bg-white border border-solid border-slate-200 rounded-lg shadow-lg z-50 min-w-full overflow-y-auto p-1 animate-[yc-slide-down_0.15s_ease-out] ${variant === 'response' ? 'top-[calc(100%+4px)] w-[100px]' : 'top-full w-full'}`}>
                     {options.map((option, index) => (
                         <div
                             key={index}
-                            className={`yc-dropdown-item ${value === option.value ? 'selected' : ''}`}
+                            className={`flex items-center justify-between px-3 py-2 text-[13px] text-slate-800 cursor-pointer rounded-md transition-colors duration-100 hover:bg-slate-50 
+                            ${variant === 'response' ? 'py-1.5 px-2.5 text-[11px]' : ''} 
+                            ${value === option.value ? 'bg-purple-100 text-purple-900 font-semibold' : ''}`}
                             onClick={() => handleSelect(option)}
                         >
                             {option.label}
                             {value === option.value && (
-                                <span className="yc-check-icon">
+                                <span className="flex items-center text-purple-900">
                                     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M10 3L4.5 8.5L2 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                     </svg>

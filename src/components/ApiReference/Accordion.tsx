@@ -14,13 +14,13 @@ export const Accordion: React.FC<AccordionProps> = ({
     const [isExpanded, setIsExpanded] = useState(initialExpanded);
 
     return (
-        <div className={`yc-accordion ${isExpanded ? 'expanded' : ''}`}>
+        <div className={`border border-solid border-slate-200 rounded-lg bg-white mt-2 overflow-hidden ${isExpanded ? 'expanded' : ''}`}>
             <div
-                className="yc-accordion-header"
+                className="flex justify-between items-center px-[14px] py-[10px] bg-slate-50 cursor-pointer select-none transition-colors duration-200 hover:bg-slate-100"
                 onClick={() => setIsExpanded(!isExpanded)}
             >
-                <div className="yc-accordion-title">{title}</div>
-                <div className="yc-accordion-icon">
+                <div className="text-[13px] font-semibold text-purple-900">{title}</div>
+                <div className={`transition-transform duration-200 text-slate-500 ${isExpanded ? 'rotate-180' : ''}`}>
                     <svg
                         width="12"
                         height="12"
@@ -36,7 +36,7 @@ export const Accordion: React.FC<AccordionProps> = ({
                 </div>
             </div>
             {isExpanded && (
-                <div className="yc-accordion-content">
+                <div className="p-3 border-t border-solid border-slate-200 bg-white">
                     {children}
                 </div>
             )}

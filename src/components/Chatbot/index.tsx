@@ -311,12 +311,20 @@ const Chatbot = () => {
 
   return (
     <>
-      <button onClick={() => setOpen(true)} className="bottomAskAI">Ask AI</button>
+      <button 
+        onClick={() => setOpen(true)} 
+        className="fixed right-5 bottom-5 w-[75px] h-[75px] rounded-full bg-[#DACAFF] text-black border-none text-[18px] font-bold z-[9999] shadow-[0_4px_8px_rgba(0,0,0,0.2)] transition-all duration-300 hover:scale-110 hover:bg-[#5223BC] hover:text-white flex items-center justify-center cursor-pointer"
+      >
+        Ask AI
+      </button>
 
       {open && (
-        <div className={`chatbot-backdrop ${isDark ? 'dark' : 'light'}`} onClick={(e) => e.target === e.currentTarget && setOpen(false)}>
-          <div className={`chatbot-modal ${isDark ? 'dark' : 'light'}`}>
-            <h3 className="chatbot-header">AI Assistant</h3>
+        <div 
+          className={`fixed inset-0 z-[9999] flex items-center justify-center backdrop-blur-[10px] animate-[fadeIn_0.4s_ease-out_forwards] ${isDark ? 'bg-black/70' : 'bg-white/70'}`} 
+          onClick={(e) => e.target === e.currentTarget && setOpen(false)}
+        >
+          <div className={`rounded-[20px] p-6 w-[90%] max-w-[500px] animate-[slideIn_0.5s_ease-out] shadow-[0_10px_40px_rgba(0,0,0,0.2)] border border-white/10 ${isDark ? 'bg-gradient-to-br from-[#1c1c1c] to-[#2a2a2a] text-[#f1f1f1]' : 'bg-gradient-to-br from-white to-[#f3f3f3] text-[#111]'}`}>
+            <h3 className="text-[24px] font-bold text-center mb-5 pb-2.5">AI Assistant</h3>
 
             <iframe
               src="https://www.chatbase.co/chatbot-iframe/PtIa1MWPIJChMGm5AUK9y"
@@ -326,117 +334,18 @@ const Chatbot = () => {
               title="Chatbase AI"
             ></iframe>
 
-            <div className="chatbot-buttons">
-              <button onClick={() => setOpen(false)} className="close-button">Close</button>
+            <div className="flex justify-end mt-3">
+              <button 
+                onClick={() => setOpen(false)} 
+                className="px-5 py-3.5 text-[15px] font-semibold border-none rounded-xl text-white cursor-pointer bg-gradient-to-r from-red-400 to-red-300 transition-all duration-300 hover:scale-95"
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>
       )}
 
-      <style>{`
-        .bottomAskAI {
-          position: fixed;
-          right: 20px;
-          bottom: 20px;
-          width: 75px;
-          height: 75px;
-          border-radius: 50%;
-          background-color: #DACAFF;
-          color: black;
-          border: none;
-          font-size: 18px;
-          font-weight: bold;
-          z-index: 9999;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-          transition: all 0.3s ease;
-        }
-
-        .bottomAskAI:hover {
-          transform: scale(1.1);
-          background-color: #5223BC;
-          color: white;
-        }
-
-        .chatbot-backdrop {
-          position: fixed;
-          inset: 0;
-          z-index: 9999;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          backdrop-filter: blur(10px);
-          animation: fadeIn 0.4s ease-out forwards;
-        }
-
-        .chatbot-backdrop.light {
-          background: rgba(255, 255, 255, 0.7);
-        }
-
-        .chatbot-backdrop.dark {
-          background: rgba(0, 0, 0, 0.7);
-        }
-
-        .chatbot-modal {
-          border-radius: 20px;
-          padding: 24px;
-          width: 90%;
-          max-width: 500px;
-          animation: slideIn 0.5s ease-out;
-          box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-          border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .chatbot-modal.light {
-          background: linear-gradient(to bottom right, #ffffff, #f3f3f3);
-          color: #111;
-        }
-
-        .chatbot-modal.dark {
-          background: linear-gradient(to bottom right, #1c1c1c, #2a2a2a);
-          color: #f1f1f1;
-        }
-
-        .chatbot-header {
-          font-size: 24px;
-          font-weight: bold;
-          text-align: center;
-          margin-bottom: 20px;
-          padding-bottom: 10px;
-          border-bottom: 2px solid rgba(200, 200, 200, 0.3);
-        }
-
-        .chatbot-buttons {
-          display: flex;
-          justify-content: flex-end;
-          margin-top: 12px;
-        }
-
-        .close-button {
-          padding: 14px 20px;
-          font-size: 15px;
-          font-weight: 600;
-          border: none;
-          border-radius: 12px;
-          color: white;
-          cursor: pointer;
-          background: linear-gradient(to right, #f87171, #fca5a5);
-          transition: all 0.3s ease;
-        }
-
-        .close-button:hover {
-          transform: scale(0.95);
-        }
-
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-
-        @keyframes slideIn {
-          from { transform: translateY(-30px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-        }
-      `}</style>
     </>
   );
 };

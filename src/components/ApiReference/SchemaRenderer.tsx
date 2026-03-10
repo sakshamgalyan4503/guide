@@ -40,8 +40,8 @@ export default function SchemaRenderer({
     // Handle oneOf
     if (resolvedSchema.oneOf) {
         return (
-            <div className="yc-schema-oneof">
-                <div className="yc-schema-info-label" style={{ marginBottom: 8 }}>One Of:</div>
+            <div className="flex flex-col mb-4">
+                <div className="text-[10px] font-bold uppercase text-slate-500 tracking-wider mb-2">One Of:</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                     {resolvedSchema.oneOf.map((s: any, i: number) => (
                         <div key={i} style={{ borderLeft: '2px solid var(--yc-teal)', paddingLeft: 12 }}>
@@ -56,42 +56,51 @@ export default function SchemaRenderer({
     // OBJECT
     if ((resolvedSchema.type === "object" || resolvedSchema.properties) && resolvedSchema.properties) {
         return (
-            <div className="yc-schema-properties">
+            <div className="flex flex-col gap-3">
                 {Object.entries(resolvedSchema.properties).map(([key, value]: [string, any]) => {
                     const resolvedValue = resolveRef(value, spec);
                     const type = resolvedValue.type || (resolvedValue.properties ? "object" : "any");
+                    const typeClasses = {
+                        string: "bg-sky-100 text-sky-700 border-sky-200",
+                        number: "bg-amber-100 text-amber-700 border-amber-200",
+                        integer: "bg-amber-100 text-amber-700 border-amber-200",
+                        boolean: "bg-green-100 text-green-700 border-green-200",
+                        object: "bg-purple-100 text-purple-700 border-purple-200",
+                        array: "bg-orange-100 text-orange-700 border-orange-200",
+                        any: "bg-slate-100 text-slate-600 border-slate-200"
+                    }[type as string] || "bg-slate-100 text-slate-600 border-slate-200";
 
                     return (
-                        <div key={key} className="yc-schema-card">
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
-                                <div className="yc-schema-meta" style={{ marginBottom: 0 }}>
-                                    <span className="yc-schema-name">{key}</span>
-                                    <span className={`yc-schema-type yc-type-${type}`}>
+                        <div key={key} className="bg-white border-2 border-solid border-slate-200 rounded-[9px] px-[14px] py-[10px] transition-all duration-200 shadow-[0_1px_3px_rgba(0,0,0,0.02)] hover:border-teal-600 hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)]">
+                            <div className="flex justify-between items-start gap-4">
+                                <div className="flex items-center gap-2 mb-0">
+                                    <span className="font-semibold">{key}</span>
+                                    <span className={`text-[10px] font-bold uppercase px-2 py-[2px] rounded-full tracking-wide border ${typeClasses}`}>
                                         {type}
                                     </span>
                                     {(resolvedSchema.required || []).includes(key) && (
-                                        <span className="yc-required">*</span>
+                                        <span className="text-red-500 font-bold">*</span>
                                     )}
                                 </div>
 
                                 {(resolvedValue.example !== undefined || resolvedValue.default !== undefined || resolvedValue.enum) && (
-                                    <div style={{ display: 'flex', gap: '12px', textAlign: 'right', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                                    <div className="flex gap-3 text-right flex-wrap justify-end">
                                         {resolvedValue.example !== undefined && (
-                                            <div className="yc-schema-info-item" style={{ alignItems: 'flex-end' }}>
-                                                {/* <span className="yc-schema-info-label">Example</span> */}
-                                                <span className="yc-schema-info-value">{JSON.stringify(resolvedValue.example)}</span>
+                                            <div className="flex flex-col gap-[2px] items-end">
+                                                {/* <span className="text-[10px] font-bold uppercase text-slate-500 tracking-wider">Example</span> */}
+                                                <span className="font-mono text-[11px] text-purple-900 break-all whitespace-pre-wrap">{JSON.stringify(resolvedValue.example)}</span>
                                             </div>
                                         )}
                                         {resolvedValue.default !== undefined && (
-                                            <div className="yc-schema-info-item" style={{ alignItems: 'flex-end' }}>
-                                                <span className="yc-schema-info-label">Default</span>
-                                                <span className="yc-schema-info-value">{String(resolvedValue.default)}</span>
+                                            <div className="flex flex-col gap-[2px] items-end">
+                                                <span className="text-[10px] font-bold uppercase text-slate-500 tracking-wider">Default</span>
+                                                <span className="font-mono text-[11px] text-purple-900 break-all whitespace-pre-wrap">{String(resolvedValue.default)}</span>
                                             </div>
                                         )}
                                         {resolvedValue.enum && (
-                                            <div className="yc-schema-info-item" style={{ alignItems: 'flex-end' }}>
-                                                <span className="yc-schema-info-label">Enum</span>
-                                                <span className="yc-schema-info-value">{resolvedValue.enum.join(", ")}</span>
+                                            <div className="flex flex-col gap-[2px] items-end">
+                                                <span className="text-[10px] font-bold uppercase text-slate-500 tracking-wider">Enum</span>
+                                                <span className="font-mono text-[11px] text-purple-900 break-all whitespace-pre-wrap">{resolvedValue.enum.join(", ")}</span>
                                             </div>
                                         )}
                                     </div>
@@ -99,7 +108,7 @@ export default function SchemaRenderer({
                             </div>
 
                             {resolvedValue.description && (
-                                <div style={{ color: 'var(--yc-text-muted)', fontSize: '11px', marginBottom: '7px', marginTop: '7px' }}>
+                                <div className="text-slate-500 text-[11px] mt-[7px] mb-[7px]">
                                     {resolvedValue.description}
                                 </div>
                             )}
@@ -121,10 +130,10 @@ export default function SchemaRenderer({
     // ARRAY ROOT
     if (resolvedSchema.type === "array" && resolvedSchema.items) {
         return (
-            <div className="yc-schema-card">
-                <div className="yc-schema-meta">
-                    <span className="yc-schema-name">Items</span>
-                    <span className="yc-schema-type yc-type-array">array</span>
+            <div className="bg-white border-2 border-solid border-slate-200 rounded-[9px] px-[14px] py-[10px] transition-all duration-200 shadow-[0_1px_3px_rgba(0,0,0,0.02)] hover:border-teal-600 hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)]">
+                <div className="flex items-center gap-2 mb-2">
+                    <span className="font-semibold">Items</span>
+                    <span className="text-[10px] font-bold uppercase px-2 py-[2px] rounded-full tracking-wide border bg-orange-100 text-orange-700 border-orange-200">array</span>
                 </div>
                 <SchemaRenderer schema={resolvedSchema.items} level={level + 1} spec={spec} />
             </div>

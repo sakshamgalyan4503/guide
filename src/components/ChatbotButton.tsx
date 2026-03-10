@@ -15,36 +15,14 @@ const ChatbotButton = () => {
 
   return (
     <>
-      <button onClick={() => setOpen(true)} className="bottomAskAI">
+      <button 
+        onClick={() => setOpen(true)} 
+        className="fixed right-5 bottom-5 w-[75px] h-[75px] rounded-full bg-[#DACAFF] text-black border-none text-[18px] font-bold z-[9999] shadow-[0_4px_8px_rgba(0,0,0,0.2)] transition-all duration-300 hover:scale-110 hover:bg-[#5223BC] hover:text-white flex items-center justify-center cursor-pointer"
+      >
         Ask AI
       </button>
 
       <ChatbotModal open={open} onClose={() => setOpen(false)} isDark={isDark} />
-
-      <style>{`
-        .bottomAskAI {
-          position: fixed;
-          right: 20px;
-          bottom: 20px;
-          width: 75px;
-          height: 75px;
-          border-radius: 50%;
-          background-color: #DACAFF;
-          color: black;
-          border: none;
-          font-size: 18px;
-          font-weight: bold;
-          z-index: 9999;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-          transition: all 0.3s ease;
-        }
-
-        .bottomAskAI:hover {
-          transform: scale(1.1);
-          background-color: #5223BC;
-          color: white;
-        }
-      `}</style>
     </>
   );
 };
