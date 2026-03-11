@@ -76,8 +76,8 @@ const CopyButton = ({ text }: { text: string }) => {
   };
 
   return (
-    <button 
-      className="bg-white border border-white/40 text-black px-3 py-1.5 rounded-lg cursor-pointer transition-all duration-200 tracking-wider shadow-[0_1px_2px_rgba(26,159,165,0.2)] hover:bg-[#c1caca] hover:-translate-y-[1px] hover:shadow-[0_2px_4px_rgba(26,159,165,0.3)]" 
+    <button
+      className="bg-white border border-white/40 text-black px-3 py-1.5 rounded-lg cursor-pointer transition-all duration-200 tracking-wider shadow-[0_1px_2px_rgba(26,159,165,0.2)] hover:bg-[#c1caca] hover:-translate-y-[1px] hover:shadow-[0_2px_4px_rgba(26,159,165,0.3)]"
       onClick={handleCopy}
     >
       {copied ? <Check width={12} height={12} /> : <CopyIcon width={12} height={12} />}
@@ -239,44 +239,53 @@ export default function YellowCardApi({ yamlUrl }: Props) {
       <div className="flex-1 flex flex-col lg:flex-row items-start flex-wrap w-full min-w-0">
         {/* LEFT DOCS (Section 2) */}
         <div className="flex-1 p-[24px] lg:p-4 lg:border-r lg:border-b-0 border-b border-slate-200 lg:overflow-y-auto bg-white w-full">
-          <div className="flex items-center gap-3 mb-3">
-            <span className={`text-[11px] font-extrabold px-2 py-1 rounded-md text-white uppercase tracking-wider ${currentMethod.toLowerCase() === 'get' ? 'bg-emerald-500' : currentMethod.toLowerCase() === 'post' ? 'bg-purple-900' : currentMethod.toLowerCase() === 'put' ? 'bg-amber-500' : currentMethod.toLowerCase() === 'delete' ? 'bg-red-500' : 'bg-[#739c27]'}`}>
+          <div className="flex items-center gap-3 mb-3 bg-gray-100 rounded-xl">
+            <span
+              className={`text-lg pl-4 font-bold m-4 uppercase tracking-wider 
+                    ${currentMethod.toLowerCase() === 'get' ? 'text-blue-500' :
+                  currentMethod.toLowerCase() === 'post' ? 'text-green-700' :
+                    currentMethod.toLowerCase() === 'put' ? 'text-amber-500' :
+                      currentMethod.toLowerCase() === 'delete' ? 'text-red-500' : 'bg-[#739c27]'}`}
+            >
               {currentMethod}
             </span>
-            <span className="font-mono font-semibold text-[15px] text-purple-900">{currentPath}</span>
-          </div>
 
+            <span className="border-l-2 border-gray-300">
+              {server}{currentPath}
+            </span>
+          </div>
           <p className="text-[16px] leading-[1.4] text-slate-500 mb-[18px]">{endpoint.summary}</p>
+
 
           {/* PARAMETERS SECTION (DOCS) */}
           {(endpoint.parameters || spec.paths[currentPath].parameters) && (
             <>
-              <div className="flex justify-between items-center" style={{ borderBottom: '1px solid #e2e8f0', paddingBottom: '12px', marginBottom: '16px' }}>
-                <div className="text-[11px] font-bold uppercase text-slate-500 tracking-wider" style={{ fontSize: '14px', color: '#3b1c5b' }}>Parameters</div>
+              <div className="flex justify-between items-center border-b border-slate-200 pb-3 mb-4">
+                <div className="font-bold uppercase tracking-wider text-[14px] text-[#3b1c5b]">Parameters</div>
               </div>
               <div className="flex flex-col gap-3">
                 {[...(endpoint.parameters || []), ...(spec.paths[currentPath].parameters || [])].map((p: any, i: number) => {
                   const resolved = resolveRef(p, spec);
                   return (
                     <div key={i} className="bg-white border-2 border-slate-200 rounded-[9px] px-[14px] py-[10px] transition-all duration-200 shadow-[0_1px_3px_rgba(0,0,0,0.02)] hover:border-teal-600 hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)]">
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
-                        <div className="flex items-center gap-2 mb-2" style={{ marginBottom: 0 }}>
+                      <div className="flex justify-between items-start gap-4">
+                        <div className="flex items-center gap-2 mb-0">
                           <span className="font-semibold">{resolved.name}</span>
                           <span className="text-[10px] font-bold uppercase px-2 py-[2px] rounded-full tracking-wide border bg-slate-100 text-slate-600 border-slate-200">{resolved.in}</span>
                           {resolved.required && <span className="text-red-500 font-bold">*</span>}
                         </div>
 
                         {((resolved.in === 'path' && pathParams[resolved.name]) || (resolved.in === 'query' && queryParams[resolved.name])) && (
-                          <div style={{ display: 'flex', gap: '12px', textAlign: 'right', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                            <div className="flex flex-col gap-[2px]" style={{ alignItems: 'flex-end' }}>
+                          <div className="flex gap-3 text-right flex-wrap justify-end">
+                            <div className="flex flex-col gap-[2px] items-end">
                               <span className="font-mono text-[11px] text-purple-900 break-all whitespace-pre-wrap">{resolved.in === 'path' ? pathParams[resolved.name] : queryParams[resolved.name]}</span>
                             </div>
                           </div>
                         )}
                       </div>
                       {resolved.description && (
-                        <div style={{ fontSize: '11px', marginBottom: '7px', marginTop: '7px' }}>
-                          <span style={{ fontWeight: 'bold' }}>
+                        <div className="text-[11px] my-[7px]">
+                          <span className="font-bold">
                             Description: {" "}
                           </span>
                           {resolved.description}
@@ -292,9 +301,9 @@ export default function YellowCardApi({ yamlUrl }: Props) {
           {/* REQUEST BODY */}
           {endpoint.requestBody && (
             <>
-              <div className="flex justify-between items-center" style={{ borderBottom: '1px solid #e2e8f0', paddingBottom: '12px', marginBottom: '16px', marginTop: 24 }}>
-                <div className="text-[11px] font-bold uppercase text-slate-500 tracking-wider" style={{ fontSize: '14px', color: '#3b1c5b' }}>Request Body JSON</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div className="flex justify-between items-center border-b border-slate-200 pb-3 mb-4 mt-6">
+                <div className="font-bold uppercase tracking-wider text-[14px] text-[#3b1c5b]">Request Body JSON</div>
+                <div className="flex items-center gap-3">
                   <span className="text-[10px] font-bold uppercase px-2 py-[2px] rounded-full tracking-wide border">application/json</span>
                 </div>
               </div>
@@ -312,16 +321,16 @@ export default function YellowCardApi({ yamlUrl }: Props) {
           {/* RESPONSE */}
           {endpoint.responses && (
             <>
-              <div className="flex justify-between items-center" style={{ marginTop: 40, borderBottom: '1px solid #e2e8f0', paddingBottom: '12px', marginBottom: '16px' }}>
-                <div className="text-[11px] font-bold uppercase text-slate-500 tracking-wider" style={{ fontSize: '14px', color: '#3b1c5b' }}>Example Response JSON</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div className="flex justify-between items-center mt-10 border-b border-slate-200 pb-3 mb-4">
+                <div className="font-bold uppercase tracking-wider text-[14px] text-[#3b1c5b]">Example Response JSON</div>
+                <div className="flex items-center gap-3">
                   <span className="text-[10px] font-bold uppercase px-2 py-[2px] rounded-full tracking-wide border">application/json</span>
                 </div>
               </div>
 
               {Object.keys(endpoint.responses).filter(c => c.startsWith("2")).map(code => (
-                <div key={code} style={{ marginBottom: 20 }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--yc-teal)', marginBottom: 8 }}>Status {code}</div>
+                <div key={code} className="mb-5">
+                  <div className="text-xs font-bold text-teal-600 mb-2">Status {code}</div>
                   <SchemaRenderer
                     spec={spec}
                     schema={endpoint.responses[code].content?.["application/json"]?.schema}
@@ -334,15 +343,17 @@ export default function YellowCardApi({ yamlUrl }: Props) {
 
         {/* RIGHT PLAYGROUND (Section 3) */}
         <div className="flex-1 min-w-[320px] bg-slate-50 text-slate-800 p-8 flex flex-col gap-5 lg:rounded-xl border border-slate-200 box-border lg:overflow-x-hidden w-full lg:m-0 m-0 max-w-none">
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col">
+            <div className="mt-3 ">Server</div>
             <DropDown
               options={spec.servers.map((s: any) => ({ label: s.url, value: s.url }))}
               value={server}
               onChange={setServer}
             />
 
+            <div className="mt-3 ">Authorization</div>
             <input
-              placeholder="Authorization"
+              placeholder="Enter Auth Key"
               className="bg-white border border-solid border-slate-200 text-slate-800 p-3 rounded-lg text-[13px] outline-none transition-all duration-200 shadow-[0_1px_2px_rgba(0,0,0,0.05)] focus:border-purple-900 focus:shadow-[0_0_0_2px_rgba(59,28,91,0.1)]"
               value={token}
               onChange={(e) => setToken(e.target.value)}
@@ -351,14 +362,14 @@ export default function YellowCardApi({ yamlUrl }: Props) {
 
           {/* PARAMETER INPUTS (PLAYGROUND) */}
           {(Object.keys(pathParams).length > 0 || Object.keys(queryParams).length > 0) && (
-            <div style={{ marginBottom: 20 }}>
-              <div className="flex justify-between items-center" style={{ borderBottom: '1px solid #e2e8f0', paddingBottom: '8px', marginBottom: '12px' }}>
-                <div className="text-[11px] font-bold uppercase text-slate-500 tracking-wider" style={{ fontSize: '13px', color: '#3b1c5b', fontWeight: 700 }}>Parameters</div>
+            <div className="mb-5">
+              <div className="flex justify-between items-center border-b border-slate-200 pb-2 mb-3">
+                <div className="font-bold uppercase tracking-wider text-[13px] text-[#3b1c5b]">Parameters</div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div className="flex flex-col gap-3">
                 {Object.entries(pathParams).map(([key, val]) => (
-                  <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <span style={{ fontSize: 12, width: 100, fontWeight: 600 }}>{key} (path)</span>
+                  <div key={key} className="flex items-center gap-3">
+                    <span className="text-xs w-[100px] font-semibold">{key} (path)</span>
                     <input
                       className="flex-1 px-2.5 py-1.5 rounded-md border border-solid border-slate-200"
                       value={val}
@@ -367,8 +378,8 @@ export default function YellowCardApi({ yamlUrl }: Props) {
                   </div>
                 ))}
                 {Object.entries(queryParams).map(([key, val]) => (
-                  <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <span style={{ fontSize: 12, width: 100, fontWeight: 600 }}>{key} (query)</span>
+                  <div key={key} className="flex items-center gap-3">
+                    <span className="text-xs w-[100px] font-semibold">{key} (query)</span>
                     <input
                       className="flex-1 px-2.5 py-1.5 rounded-md border border-solid border-slate-200"
                       value={val}
@@ -380,29 +391,38 @@ export default function YellowCardApi({ yamlUrl }: Props) {
             </div>
           )}
 
-          <div className="border border-solid border-slate-200 rounded-xl bg-white mb-5">
-            <div className="flex items-center justify-between bg-slate-50 py-3 px-4 border-b border-solid border-slate-200 rounded-t-xl">
-              <span className={`px-2.5 py-1 rounded-md text-white font-bold mr-2.5 uppercase ${currentMethod.toLowerCase() === 'get' ? 'bg-emerald-500' : currentMethod.toLowerCase() === 'post' ? 'bg-purple-900' : currentMethod.toLowerCase() === 'put' ? 'bg-amber-500' : currentMethod.toLowerCase() === 'delete' ? 'bg-red-500' : 'bg-[#739c27]'}`}>{currentMethod}</span>
-              <span className="flex-1 ml-2.5">{currentPath}</span>
+          <div className="rounded-xl bg-[#282a2e] mb-5 overflow-hidden">
+            <div className="flex items-center justify-between bg-[#282a2e] py-3 px-4 border-b border-[#3e4043]">
 
-              <div className="flex w-[40%] justify-end gap-2">
-                <div style={{ width: '100%' }}>
-                  <DropDown
-                    options={[
-                      { label: 'cURL', value: 'curl' },
-                      { label: 'Node.js', value: 'node' },
-                      { label: 'Python', value: 'python' },
-                      { label: 'Go', value: 'go' },
-                      { label: 'PHP', value: 'php' },
-                      { label: 'Ruby', value: 'ruby' },
-                      { label: 'Java', value: 'java' },
-                      { label: 'C#', value: 'csharp' }
-                    ]}
-                    value={language}
-                    onChange={setLanguage}
-                  />
+              <div className="w-[100px]">
+                <DropDown
+                  options={[
+                    { label: 'cURL', value: 'curl' },
+                    { label: 'Node.js', value: 'node' },
+                    { label: 'Python', value: 'python' },
+                    { label: 'Go', value: 'go' },
+                    { label: 'PHP', value: 'php' },
+                    { label: 'Ruby', value: 'ruby' },
+                    { label: 'Java', value: 'java' },
+                    { label: 'C#', value: 'csharp' }
+                  ]}
+                  value={language}
+                  onChange={setLanguage}
+                  variant="dark"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 shrink-0">
+                <button
+                  onClick={execute}
+                  className={`bg-white text-slate-800 border-none py-1.5 px-3 flex items-center gap-2 rounded-md text-[13px] font-semibold transition-colors hover:bg-gray-100 disabled:opacity-60 disabled:cursor-not-allowed ${loading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                  disabled={loading}
+                >
+                  <span className="text-[10px]">▶</span> {loading ? 'Running...' : 'Run'}
+                </button>
+                <div className="text-gray-400 hover:text-white transition-colors flex items-center justify-center">
+                  <CopyButton text={generatedCode} />
                 </div>
-                <CopyButton text={generatedCode} />
               </div>
             </div>
 
@@ -417,23 +437,12 @@ export default function YellowCardApi({ yamlUrl }: Props) {
                   padding: '16px',
                   fontFamily: 'monospace',
                   fontSize: '12px',
-                  borderRadius: '6px'
+                  borderRadius: '0 0 12px 12px'
                 }}
                 codeTagProps={{ style: { fontFamily: 'monospace' } }}
               >
                 {generatedCode}
               </SyntaxHighlighter>
-            </div>
-
-            <div className="flex justify-end bg-slate-50 py-3 px-4 border-t border-slate-200 rounded-b-xl">
-              <button
-                onClick={execute}
-                className="bg-violet-600 text-white border-none py-2 px-[14px] rounded-[20px] font-medium transition-colors hover:bg-violet-700 disabled:opacity-60 disabled:cursor-not-allowed"
-                disabled={loading}
-                style={{ cursor: loading ? 'not-allowed' : 'pointer' }}
-              >
-                {loading ? 'Executing...' : '▶ Try it'}
-              </button>
             </div>
           </div>
 
@@ -441,19 +450,19 @@ export default function YellowCardApi({ yamlUrl }: Props) {
             <>
               <div className="border border-solid border-slate-200 rounded-xl bg-white mb-5">
                 <div className="flex items-center justify-between bg-slate-50 py-3 px-4 border-b border-solid border-slate-200 rounded-t-xl">
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <span className="text-[11px] font-bold uppercase text-teal-600 tracking-wider mt-0 mr-2" style={{ fontSize: '14px', color: '#3b1c5b', fontWeight: 700 }}>Actual Response</span>
+                  <div className="flex items-center">
+                    <span className="text-[14px] font-bold uppercase text-[#3b1c5b] tracking-wider mt-0 mr-2">Actual Response</span>
                     <span className={`px-2 py-[2px] rounded-md font-bold mr-2.5 uppercase text-[11px] text-white ${String(statusCode || 200).startsWith('2') ? 'bg-emerald-500' : 'bg-red-500'}`}>{statusCode || '200'}</span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div className="flex items-center gap-3">
                     <span>application/json</span>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', height: '100%', justifyContent: 'center' }}>
+                    <div className="flex items-center gap-3 h-full justify-center">
                       <CopyButton text={JSON.stringify(response, null, 2)} />
                     </div>
                   </div>
                 </div>
 
-                <pre className="bg-white text-slate-800 p-4 rounded-b-xl font-mono text-[13px] leading-[1.4] overflow-auto max-w-full" style={{ maxHeight: '200px', margin: 0 }}>
+                <pre className="bg-white text-slate-800 p-4 rounded-b-xl font-mono text-[13px] leading-[1.4] overflow-auto max-w-full max-h-[200px] m-0">
                   {JSON.stringify(response, null, 2)}
                 </pre>
               </div>
@@ -463,10 +472,10 @@ export default function YellowCardApi({ yamlUrl }: Props) {
           <div className="flex flex-col gap-4">
             <div className="border border-solid border-slate-200 rounded-xl bg-white mb-5">
               <div className="flex items-center justify-between bg-slate-50 py-3 px-4 border-b border-solid border-slate-200 rounded-t-xl">
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <span className="text-[11px] font-bold uppercase text-teal-600 tracking-wider mt-0 mr-2" style={{ fontSize: '14px', color: '#3b1c5b', fontWeight: 700 }}>Example Response</span>
+                <div className="flex items-center">
+                  <span className="text-[14px] font-bold uppercase text-[#3b1c5b] tracking-wider mt-0 mr-2">Example Response</span>
                   {endpoint.responses && Object.keys(endpoint.responses).length > 1 ? (
-                    <div style={{ width: '80px' }}>
+                    <div className="w-[80px]">
                       <DropDown
                         options={Object.keys(endpoint.responses).map(code => ({ label: code, value: code }))}
                         value={exampleStatus}
@@ -487,27 +496,18 @@ export default function YellowCardApi({ yamlUrl }: Props) {
                     <span className={`px-2 py-[2px] rounded-md font-bold mr-2.5 uppercase text-[11px] text-white ${String(exampleStatus).startsWith('2') ? 'bg-emerald-500' : 'bg-red-500'}`}>{exampleStatus}</span>
                   )}
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <span className="text-[10px] font-bold uppercase px-2 py-[2px] rounded-full tracking-wide border bg-slate-100 text-slate-600 border-slate-200">application/json</span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', height: '100%', justifyContent: 'center' }}>
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] font-bold uppercase px-4 py-2 rounded-lg tracking-wide border bg-slate-100 text-slate-600 border-slate-200">application/json</span>
+                  <div className="flex items-center gap-3 h-full justify-center">
                     <CopyButton text={exampleResponse} />
                   </div>
                 </div>
               </div>
               <textarea
-                className="w-full max-w-full min-h-[200px] max-h-[250px] bg-white text-slate-800 font-mono text-[13px] p-4 rounded-b-xl resize-y border-0 border-l-[3px] border-l-teal-600 shadow-[inset_0_1px_2px_rgba(0,0,0,0.05)] overflow-y-auto outline-none focus:ring-0"
+                className="w-full max-w-full min-h-[200px] max-h-[250px] bg-white text-slate-800 font-mono text-[13px] p-4 rounded-b-xl rounded-t-none resize-y border-0 border-l-[3px] border-l-teal-600 shadow-[inset_0_1px_2px_rgba(0,0,0,0.05)] overflow-y-auto outline-none focus:ring-0"
                 placeholder="Example Response"
                 value={exampleResponse}
                 onChange={(e) => setExampleResponse(e.target.value)}
-                style={{
-                  border: 'none',
-                  borderTop: 'none',
-                  borderTopLeftRadius: 0,
-                  borderTopRightRadius: 0,
-                  minHeight: '200px',
-                  width: '100%',
-                  resize: 'vertical'
-                }}
               />
             </div>
           </div>

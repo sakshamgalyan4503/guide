@@ -15,7 +15,7 @@ interface DropDownProps<T> {
     placeholder?: string;
     label?: string;
     disabled?: boolean;
-    variant?: 'default' | 'response';
+    variant?: 'default' | 'response' | 'dark';
 }
 
 export function DropDown<T>({
@@ -69,24 +69,26 @@ export function DropDown<T>({
             <div
                 className={`flex items-center justify-between cursor-pointer select-none transition-all duration-200 
                 ${variant === 'response' 
-                    ? `px-2 py-[2px] rounded-xl text-[11px] font-bold border border-transparent 
-                        ${String(value).startsWith('2') ? 'bg-[#e6f6f4] text-teal-600 border-teal-600/20' : 'bg-red-50 text-red-500 border-red-500/20'}`
+                    ? `px-4 py-2 rounded-lg text-[11px] font-bold border border-transparent 
+                        ${String(value).startsWith('2') ? 'bg-green-100 text-teal-700 border-teal-700/20' : 'bg-red-50 text-red-500 border-red-500/20'}`
+                    : variant === 'dark'
+                    ? `bg-[#f0f0f0] border-none px-3 py-1.5 rounded-[4px] shadow-sm ${isOpen ? 'ring-2 ring-purple-900/20' : ''}`
                     : `bg-white border border-solid border-slate-200 px-3 py-2.5 rounded-lg hover:border-slate-300 shadow-sm ${isOpen ? 'border-purple-900 ring-4 ring-purple-900/10' : ''}`
                 }`}
                 onClick={() => !disabled && setIsOpen(!isOpen)}
             >
-                <span className={`text-[13px] font-medium whitespace-nowrap overflow-hidden text-ellipsis ${variant === 'response' ? 'text-[11px] m-0 mr-1' : 'ml-1 mr-2 text-slate-800'} ${!selectedOption ? 'text-slate-500' : ''}`}>
+                <span className={`text-[13px] font-medium whitespace-nowrap overflow-hidden text-ellipsis ${variant === 'response' ? 'text-[11px] m-0 mr-1' : variant === 'dark' ? 'mr-3 text-[#2d2f32] font-semibold' : 'ml-1 mr-2 text-slate-800'} ${!selectedOption ? 'text-slate-500' : ''}`}>
                     {selectedOption ? selectedOption.label : placeholder}
                 </span>
-                <span className={`flex items-center text-slate-500 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''} ${variant === 'response' ? '-mt-[1px]' : ''}`}>
+                <span className={`flex items-center transition-transform duration-200 ${isOpen ? 'rotate-180' : ''} ${variant === 'response' ? '-mt-[1px] text-slate-500' : variant === 'dark' ? 'text-[#2d2f32]' : 'text-slate-500'}`}>
                     <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                 </span>
             </div>
 
             {isOpen && (
-                <div className={`absolute left-0 mt-1 bg-white border border-solid border-slate-200 rounded-lg shadow-lg z-50 min-w-full overflow-y-auto p-1 animate-[yc-slide-down_0.15s_ease-out] ${variant === 'response' ? 'top-[calc(100%+4px)] w-[100px]' : 'top-full w-full'}`}>
+                <div className={`absolute left-0 mt-1 bg-white border border-solid border-slate-200 rounded-lg shadow-lg z-50 min-w-full overflow-y-auto p-1 animate-[yc-slide-down_0.15s_ease-out] ${variant === 'response' ? 'top-[calc(100%+4px)] w-[100px]' : variant === 'dark' ? 'top-[calc(100%+4px)] w-full rounded-md shadow-xl' : 'top-full w-full'}`}>
                     {options.map((option, index) => (
                         <div
                             key={index}
