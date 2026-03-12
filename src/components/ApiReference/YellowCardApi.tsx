@@ -9,6 +9,7 @@ import DropDown from "./DropDown";
 import { Check, CopyIcon } from "lucide-react";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import Tabs from "./Tab";
 
 interface Props {
   yamlUrl: string;
@@ -100,6 +101,7 @@ export default function YellowCardApi({ yamlUrl }: Props) {
   const [pathParams, setPathParams] = useState<Record<string, string>>({});
   const [queryParams, setQueryParams] = useState<Record<string, string>>({});
   const [exampleStatus, setExampleStatus] = useState<string>("200");
+  const [activeTab, setActiveTab] = useState<string>("description");
 
   const [generatedCode, setGeneratedCode] = useState("");
 
@@ -241,7 +243,7 @@ export default function YellowCardApi({ yamlUrl }: Props) {
         <div className="flex-1 p-[24px] lg:p-4 lg:border-r lg:border-b-0 border-b border-slate-200 lg:overflow-y-auto bg-white w-full">
           <div className="flex items-center gap-3 mb-3 bg-gray-100 rounded-xl">
             <span
-              className={`text-lg pl-4 font-bold m-4 uppercase tracking-wider 
+              className={`text-lg pl-4 font-bold m-4 uppercase
                     ${currentMethod.toLowerCase() === 'get' ? 'text-blue-500' :
                   currentMethod.toLowerCase() === 'post' ? 'text-green-700' :
                     currentMethod.toLowerCase() === 'put' ? 'text-amber-500' :
@@ -254,72 +256,134 @@ export default function YellowCardApi({ yamlUrl }: Props) {
               {server}{currentPath}
             </span>
           </div>
-          <p className="text-[16px] leading-[1.4] text-slate-500 mb-[18px]">{endpoint.summary}</p>
-
-
-          {/* PARAMETERS SECTION (DOCS) */}
-          {(endpoint.parameters || spec.paths[currentPath].parameters) && (
-            <>
-              <div className="flex justify-between items-center border-b border-slate-200 pb-3 mb-4">
-                <div className="font-bold uppercase tracking-wider text-[14px] text-[#3b1c5b]">Parameters</div>
-              </div>
-              <div className="flex flex-col gap-3">
-                {[...(endpoint.parameters || []), ...(spec.paths[currentPath].parameters || [])].map((p: any, i: number) => {
-                  const resolved = resolveRef(p, spec);
-                  return (
-                    <div key={i} className="bg-white border-2 border-slate-200 rounded-[9px] px-[14px] py-[10px] transition-all duration-200 shadow-[0_1px_3px_rgba(0,0,0,0.02)] hover:border-teal-600 hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)]">
-                      <div className="flex justify-between items-start gap-4">
-                        <div className="flex items-center gap-2 mb-0">
-                          <span className="font-semibold">{resolved.name}</span>
-                          <span className="text-[10px] font-bold uppercase px-2 py-[2px] rounded-full tracking-wide border bg-slate-100 text-slate-600 border-slate-200">{resolved.in}</span>
-                          {resolved.required && <span className="text-red-500 font-bold">*</span>}
-                        </div>
-
-                        {((resolved.in === 'path' && pathParams[resolved.name]) || (resolved.in === 'query' && queryParams[resolved.name])) && (
-                          <div className="flex gap-3 text-right flex-wrap justify-end">
-                            <div className="flex flex-col gap-[2px] items-end">
-                              <span className="font-mono text-[11px] text-purple-900 break-all whitespace-pre-wrap">{resolved.in === 'path' ? pathParams[resolved.name] : queryParams[resolved.name]}</span>
+          <Tabs
+            tabs={[
+              { label: "Description", value: "description" },
+              { label: "Request parameters", value: "requestParameters" },
+              { label: "Response parameters", value: "responseParameters" },
+            ]}
+            defaultTab={activeTab}
+            onChange={(val) => setActiveTab(String(val))}
+          />
+          {activeTab === "description" && (
+            <div className="mt-4">
+              <p className="text-[16px] leading-[1.4] text-slate-500 mb-6">{endpoint.summary}</p>
+              {/* PARAMETERS SECTION (DOCS) */}
+              {(endpoint.parameters || spec.paths[currentPath].parameters) && (
+                <>
+                  <div className="flex justify-between items-center border-b border-slate-200 pb-3 mb-4">
+                    <div className="font-bold uppercase tracking-wider text-[14px] text-[#3b1c5b]">Parameters</div>
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    {[...(endpoint.parameters || []), ...(spec.paths[currentPath].parameters || [])].map((p: any, i: number) => {
+                      const resolved = resolveRef(p, spec);
+                      return (
+                        <div key={i} className="bg-white border-2 border-slate-200 rounded-[9px] px-[14px] py-[10px] transition-all duration-200 shadow-[0_1px_3px_rgba(0,0,0,0.02)] hover:border-teal-600 hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)]">
+                          <div className="flex justify-between items-start gap-4">
+                            <div className="flex items-center gap-2 mb-0">
+                              <span className="font-semibold">{resolved.name}</span>
+                              <span className="text-[10px] font-bold uppercase px-2 py-[2px] rounded-full tracking-wide border bg-slate-100 text-slate-600 border-slate-200">{resolved.in}</span>
+                              {resolved.required && <span className="text-red-500 font-bold">*</span>}
                             </div>
+
+                            {((resolved.in === 'path' && pathParams[resolved.name]) || (resolved.in === 'query' && queryParams[resolved.name])) && (
+                              <div className="flex gap-3 text-right flex-wrap justify-end">
+                                <div className="flex flex-col gap-[2px] items-end">
+                                  <span className="font-mono text-[11px] text-purple-900 break-all whitespace-pre-wrap">{resolved.in === 'path' ? pathParams[resolved.name] : queryParams[resolved.name]}</span>
+                                </div>
+                              </div>
+                            )}
                           </div>
-                        )}
-                      </div>
-                      {resolved.description && (
-                        <div className="text-[11px] my-[7px]">
-                          <span className="font-bold">
-                            Description: {" "}
-                          </span>
-                          {resolved.description}
+                          {resolved.description && (
+                            <div className="text-[11px] my-[7px]">
+                              {resolved.description}
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </div>
           )}
 
-          {/* REQUEST BODY */}
-          {endpoint.requestBody && (
-            <>
-              <div className="flex justify-between items-center border-b border-slate-200 pb-3 mb-4 mt-6">
-                <div className="font-bold uppercase tracking-wider text-[14px] text-[#3b1c5b]">Request Body JSON</div>
-                <div className="flex items-center gap-3">
-                  <span className="text-[10px] font-bold uppercase px-2 py-[2px] rounded-full tracking-wide border">application/json</span>
-                </div>
-              </div>
+          {activeTab === "requestParameters" && (
+            <div className="">
+              {/* REQUEST BODY */}
+              {endpoint.requestBody && (
+                <>
+                  <div className="flex justify-between items-center border-b border-slate-200 pb-3 mb-4 mt-6">
+                    <div className="font-bold uppercase tracking-wider text-[14px] text-[#3b1c5b]">Request Body JSON</div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-[10px] font-bold uppercase px-2 py-[2px] rounded-full tracking-wide border">application/json</span>
+                    </div>
+                  </div>
 
-              <SchemaRenderer
-                spec={spec}
-                schema={
-                  endpoint.requestBody.content["application/json"]
-                    .schema
-                }
-              />
-            </>
+                  <SchemaRenderer
+                    spec={spec}
+                    schema={
+                      endpoint.requestBody.content["application/json"]
+                        .schema
+                    }
+                  />
+                </>
+              )}
+            </div>
+          )}
+
+          {activeTab === "responseParameters" && (
+            <div className="mt-4">
+              {/* RESPONSE PARAMETERS SECTION (DOCS) */}
+              {endpoint.responses && (
+                <>
+                  <div className="flex justify-between items-center border-b border-slate-200 pb-3 mb-4">
+                    <div className="font-bold uppercase tracking-wider text-[14px] text-[#3b1c5b]">Response Parameters</div>
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    {Object.entries(endpoint.responses).map(([code, res]: [string, any], i: number) => {
+                      const resolved = resolveRef(res, spec);
+                      const schema = resolved.content?.["application/json"]?.schema;
+                      if (!schema) return null;
+
+                      const example = generateExampleFromSchema(schema, spec);
+
+                      return (
+                        <div key={i} className="bg-white border-2 border-slate-200 rounded-[9px] px-[14px] py-[10px] transition-all duration-200 shadow-[0_1px_3px_rgba(0,0,0,0.02)] hover:border-teal-600 hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)]">
+                          <div className="flex justify-between items-start gap-4">
+                            <div className="flex items-center gap-2 mb-0">
+                              <span className="font-semibold">{code}</span>
+                              <span className="text-[10px] font-bold uppercase px-2 py-[2px] rounded-full tracking-wide border bg-slate-100 text-slate-600 border-slate-200">{resolved.in}</span>
+                              {resolved.required && <span className="text-red-500 font-bold">*</span>}
+                            </div>
+
+                            {((resolved.in === 'path' && pathParams[resolved.name]) || (resolved.in === 'query' && queryParams[resolved.name])) && (
+                              <div className="flex gap-3 text-right flex-wrap justify-end">
+                                <div className="flex flex-col gap-[2px] items-end">
+                                  <span className="font-mono text-[11px] text-purple-900 break-all whitespace-pre-wrap">{resolved.in === 'path' ? pathParams[resolved.name] : queryParams[resolved.name]}</span>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                          {resolved.description && (
+                            <div className="text-[11px] my-[7px]">
+                              <span className="font-bold">
+                                Description: {" "}
+                              </span>
+                              {resolved.description}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </div>
           )}
 
           {/* RESPONSE */}
-          {endpoint.responses && (
+          {/* {endpoint.responses && (
             <>
               <div className="flex justify-between items-center mt-10 border-b border-slate-200 pb-3 mb-4">
                 <div className="font-bold uppercase tracking-wider text-[14px] text-[#3b1c5b]">Example Response JSON</div>
@@ -338,7 +402,7 @@ export default function YellowCardApi({ yamlUrl }: Props) {
                 </div>
               ))}
             </>
-          )}
+          )} */}
         </div>
 
         {/* RIGHT PLAYGROUND (Section 3) */}
@@ -415,7 +479,7 @@ export default function YellowCardApi({ yamlUrl }: Props) {
               <div className="flex items-center justify-end gap-3 shrink-0">
                 <button
                   onClick={execute}
-                  className={`bg-white text-slate-800 border-none py-1.5 px-3 flex items-center gap-2 rounded-md text-[13px] font-semibold transition-colors hover:bg-gray-100 disabled:opacity-60 disabled:cursor-not-allowed ${loading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                  className={`bg-white text-slate-800 border-none py-1.5 px-3 flex items-center gap-2 rounded-md transition-colors hover:bg-gray-100 disabled:opacity-60 disabled:cursor-not-allowed ${loading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                   disabled={loading}
                 >
                   <span className="text-[10px]">▶</span> {loading ? 'Running...' : 'Run'}
@@ -462,9 +526,22 @@ export default function YellowCardApi({ yamlUrl }: Props) {
                   </div>
                 </div>
 
-                <pre className="bg-white text-slate-800 p-4 rounded-b-xl font-mono text-[13px] leading-[1.4] overflow-auto max-w-full max-h-[200px] m-0">
+                <SyntaxHighlighter
+                  language="bash"
+                  style={oneDark}
+                  customStyle={{
+                    maxHeight: '300px',
+                    minHeight: '100px',
+                    margin: 0,
+                    padding: '16px',
+                    fontFamily: 'monospace',
+                    fontSize: '12px',
+                    borderRadius: '0 0 12px 12px'
+                  }}
+                  codeTagProps={{ style: { fontFamily: 'monospace' } }}
+                >
                   {JSON.stringify(response, null, 2)}
-                </pre>
+                </SyntaxHighlighter>
               </div>
             </>
           )}
@@ -503,16 +580,26 @@ export default function YellowCardApi({ yamlUrl }: Props) {
                   </div>
                 </div>
               </div>
-              <textarea
-                className="w-full max-w-full min-h-[200px] max-h-[250px] bg-white text-slate-800 font-mono text-[13px] p-4 rounded-b-xl rounded-t-none resize-y border-0 border-l-[3px] border-l-teal-600 shadow-[inset_0_1px_2px_rgba(0,0,0,0.05)] overflow-y-auto outline-none focus:ring-0"
-                placeholder="Example Response"
-                value={exampleResponse}
-                onChange={(e) => setExampleResponse(e.target.value)}
-              />
+              <SyntaxHighlighter
+                  language="bash"
+                  style={oneDark}
+                  customStyle={{
+                    maxHeight: '300px',
+                    minHeight: '100px',
+                    margin: 0,
+                    padding: '16px',
+                    fontFamily: 'monospace',
+                    fontSize: '12px',
+                    borderRadius: '0 0 12px 12px'
+                  }}
+                  codeTagProps={{ style: { fontFamily: 'monospace' } }}
+                >
+                  {exampleResponse}
+                </SyntaxHighlighter>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
