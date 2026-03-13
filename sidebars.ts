@@ -42,30 +42,41 @@ module.exports = {
 
   ],
   apmDocs: [
+    // {
+    //   type: "doc",
+    //   id: "overview",
+    //   label: "Overview",
+    // },
+    // {
+    //   type: "doc",
+    //   id: "environments",
+    //   label: "Environments",
+    // },
+    // {
+    //   type: "doc",
+    //   id: "Integration Steps",
+    //   label: "Integration Steps",
+    // },
+    // {
+    //   type: "doc",
+    //   id: "Webhook",
+    //   label: "Webhook",
+    // },
+    // {
+    //   type: "doc",
+    //   id: "Status and Error Codes",
+    //   label: "Status and Error Codes",
+    // },
     {
-      type: "doc",
-      id: "overview",
-      label: "Overview",
-    },
-    {
-      type: "doc",
-      id: "environments",
-      label: "Environments",
-    },
-    {
-      type: "doc",
-      id: "Integration Steps",
-      label: "Integration Steps",
-    },
-    {
-      type: "doc",
-      id: "Webhook",
-      label: "Webhook",
-    },
-    {
-      type: "doc",
-      id: "Status and Error Codes",
-      label: "Status and Error Codes",
+      type: 'category',
+      label: 'Basic Docs',
+      items: [
+        'overview',
+        'environments',
+        'Integration Steps',
+        'Webhook',
+        'Status and Error Codes',
+      ]
     },
     {
       type: 'category',

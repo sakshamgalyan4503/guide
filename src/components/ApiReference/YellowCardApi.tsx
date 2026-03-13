@@ -268,19 +268,21 @@ export default function YellowCardApi({ yamlUrl }: Props) {
           {activeTab === "description" && (
             <div className="mt-4">
               <p className="text-[16px] leading-[1.4] text-slate-500 mb-6">{endpoint.summary}</p>
+              <p className="text-[16px] leading-[1.4] text-slate-500 mb-6">{endpoint.description}</p>
+
               {/* PARAMETERS SECTION (DOCS) */}
               {(endpoint.parameters || spec.paths[currentPath].parameters) && (
                 <>
-                  <div className="flex justify-between items-center border-b border-slate-200 pb-3 mb-4">
-                    <div className="font-bold uppercase tracking-wider text-[14px] text-[#3b1c5b]">Parameters</div>
+                  <div className="flex justify-between items-center border-b border-slate-200 pb-3 mt-1">
+                    <div className="font-bold uppercase tracking-wider text-md text-[#3b1c5b]">Parameters</div>
                   </div>
                   <div className="flex flex-col gap-3">
                     {[...(endpoint.parameters || []), ...(spec.paths[currentPath].parameters || [])].map((p: any, i: number) => {
                       const resolved = resolveRef(p, spec);
                       return (
-                        <div key={i} className="bg-white border-2 border-slate-200 rounded-[9px] px-[14px] py-[10px] transition-all duration-200 shadow-[0_1px_3px_rgba(0,0,0,0.02)] hover:border-teal-600 hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)]">
+                        <div key={i} className="bg-white border-2 border-slate-200 rounded-md px-[14px] py-[10px] transition-all duration-200 shadow-[0_1px_3px_rgba(0,0,0,0.02)] hover:border-teal-600 hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)]">
                           <div className="flex justify-between items-start gap-4">
-                            <div className="flex items-center gap-2 mb-0">
+                            <div className="flex items-center gap-2 mb-0 border border-slate-200">
                               <span className="font-semibold">{resolved.name}</span>
                               <span className="text-[10px] font-bold uppercase px-2 py-[2px] rounded-full tracking-wide border bg-slate-100 text-slate-600 border-slate-200">{resolved.in}</span>
                               {resolved.required && <span className="text-red-500 font-bold">*</span>}

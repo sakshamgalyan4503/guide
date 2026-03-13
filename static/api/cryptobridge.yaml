@@ -13,54 +13,11 @@ paths:
       tags: [CRYPTO-BRIDGE]
       summary: Initiate a new purchase via CRYPTO-BRIDGE
       description: |
-        ```bash
-        curl --location 'https://api.paysecure.net/api/v1/purchases' \
-        --header 'Content-Type: application/json' \
-        --header 'Authorization: Bearer Token' \
-        --data-raw '{
-            "client": {
-                "email": "gaurav@gmail.com",
-                "full_name": "Gaurav Test",
-                "country": "US",
-                "city": "123",
-                "stateCode": "NYC",
-                "street_address": "test test",
-                "zip_code": "234567",
-                "phone": "9999999999"
-            },
-            "purchase": {
-                "currency": "USD",
-                "products": [
-                    {
-                        "name": "product name",
-                        "price": 5.86
-                    }
-                ]
-            },
-            "paymentMethod": "CRYPTO-BRIDGE",
-            "brand_id": "cec67fe3-a01d-4d0d-b100-9fafb200fe15",
-            "success_redirect": "https://your.success.redirect.com",
-            "pending_redirect": "https://your.pending.redirect.com",
-            "failure_redirect": "https://your.failure.redirect.com",
-            "success_callback": "https://your.success.callback.com",
-            "failure_callback": "https://your.failure.callback.com",
-            "extraParam": {
-                "clientFee": 0.1, //optional
-                "toAddress": [
-                    {
-                        "symbol": "ETH",
-                        "networkName": "ETHEREUM",
-                        "address": "0xc4db7bBB898B98D15be823454d1dff6C308BC9A4"
-                    },
-                    {
-                        "symbol": "USDC",
-                        "networkName": "POLYGON",
-                        "address": "0xc4cs7bBB898B89D15be823445d1dff6C380BC9D3"
-                    }
-                ]
-            }
-        }'
-        ```
+        Initiate a new purchase via CRYPTO-BRIDGE
+        | Initiate a new purchase via CRYPTO-BRIDGE
+        | Initiate a new purchase via CRYPTO-BRIDGE
+        | Initiate a new purchase via CRYPTO-BRIDGE
+        
       parameters:
         - in: header
           name: Authorization
