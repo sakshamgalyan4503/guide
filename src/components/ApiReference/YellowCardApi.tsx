@@ -243,11 +243,12 @@ export default function YellowCardApi({ yamlUrl }: Props) {
         <div className="flex-1 p-[24px] lg:p-4 lg:border-r lg:border-b-0 border-b border-slate-200 lg:overflow-y-auto bg-white w-full">
           <div className="flex items-center gap-3 mb-3 bg-gray-100 rounded-xl">
             <span
-              className={`text-lg pl-4 font-bold m-4 uppercase
+              className={`text-lg pl-2 font-bold m-4 uppercase
                     ${currentMethod.toLowerCase() === 'get' ? 'text-blue-500' :
                   currentMethod.toLowerCase() === 'post' ? 'text-green-700' :
                     currentMethod.toLowerCase() === 'put' ? 'text-amber-500' :
-                      currentMethod.toLowerCase() === 'delete' ? 'text-red-500' : 'bg-[#739c27]'}`}
+                      currentMethod.toLowerCase() === 'patch' ? 'text-purple-500' :
+                        currentMethod.toLowerCase() === 'delete' ? 'text-red-500' : 'bg-[#739c27]'}`}
             >
               {currentMethod}
             </span>
