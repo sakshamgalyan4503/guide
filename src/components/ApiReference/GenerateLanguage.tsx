@@ -35,8 +35,8 @@ export async function generateCode(
 
     // Map the simplified language name to HTTPSnippet target/client
     const languageMap: Record<string, { target: string; client: string }> = {
-      curl: { target: "shell", client: "curl" },
-      node: { target: "node", client: "axios" },
+      shell: { target: "shell", client: "curl" },
+      javascript: { target: "node", client: "axios" },
       python: { target: "python", client: "requests" },
       go: { target: "go", client: "native" },
       php: { target: "php", client: "curl" },

@@ -10,6 +10,7 @@ import { Check, CopyIcon } from "lucide-react";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import Tabs from "./Tab";
+import { Editor } from "@monaco-editor/react";
 
 interface Props {
   yamlUrl: string;
@@ -97,7 +98,7 @@ export default function YellowCardApi({ yamlUrl }: Props) {
   const [response, setResponse] = useState<any>(null);
   const [statusCode, setStatusCode] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
-  const [language, setLanguage] = useState("curl");
+  const [language, setLanguage] = useState("shell");
   const [pathParams, setPathParams] = useState<Record<string, string>>({});
   const [queryParams, setQueryParams] = useState<Record<string, string>>({});
   const [exampleStatus, setExampleStatus] = useState<string>("200");
@@ -336,52 +337,34 @@ export default function YellowCardApi({ yamlUrl }: Props) {
           )}
 
           {activeTab === "responseParameters" && (
-            <div className="mt-4">
+            <div className="mt-4 flex flex-col gap-6">
               {/* RESPONSE PARAMETERS SECTION (DOCS) */}
-              {endpoint.responses && (
-                <>
-                  <div className="flex justify-between items-center border-b border-slate-200 pb-3 mb-4">
-                    <div className="font-bold uppercase tracking-wider text-[14px] text-[#3b1c5b]">Response Parameters</div>
+              {endpoint.responses && Object.entries(endpoint.responses).map(([code, res]: [string, any], i: number) => {
+                const resolved = resolveRef(res, spec);
+                const schema = resolved.content?.["application/json"]?.schema;
+                if (!schema) return null;
+
+                return (
+                  <div key={i} className="flex flex-col gap-3">
+                    <div className="flex justify-between items-center border-b border-slate-200 pb-3 mb-2">
+                      <div className="flex items-center gap-2">
+                        <div className="font-bold uppercase tracking-wider text-[14px] text-[#3b1c5b]">Response {code}</div>
+                        <span className={`px-2 py-[2px] rounded-md font-bold uppercase text-[10px] text-white ${code.startsWith('2') ? 'bg-emerald-500' : 'bg-red-500'}`}>
+                          {code}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-[10px] font-bold uppercase px-2 py-[2px] rounded-full tracking-wide border">application/json</span>
+                      </div>
+                    </div>
+
+                    <SchemaRenderer
+                      spec={spec}
+                      schema={schema}
+                    />
                   </div>
-                  <div className="flex flex-col gap-3">
-                    {Object.entries(endpoint.responses).map(([code, res]: [string, any], i: number) => {
-                      const resolved = resolveRef(res, spec);
-                      const schema = resolved.content?.["application/json"]?.schema;
-                      if (!schema) return null;
-
-                      const example = generateExampleFromSchema(schema, spec);
-
-                      return (
-                        <div key={i} className="bg-white border-2 border-slate-200 rounded-[9px] px-[14px] py-[10px] transition-all duration-200 shadow-[0_1px_3px_rgba(0,0,0,0.02)] hover:border-teal-600 hover:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)]">
-                          <div className="flex justify-between items-start gap-4">
-                            <div className="flex items-center gap-2 mb-0">
-                              <span className="font-semibold">{code}</span>
-                              <span className="text-[10px] font-bold uppercase px-2 py-[2px] rounded-full tracking-wide border bg-slate-100 text-slate-600 border-slate-200">{resolved.in}</span>
-                              {resolved.required && <span className="text-red-500 font-bold">*</span>}
-                            </div>
-
-                            {((resolved.in === 'path' && pathParams[resolved.name]) || (resolved.in === 'query' && queryParams[resolved.name])) && (
-                              <div className="flex gap-3 text-right flex-wrap justify-end">
-                                <div className="flex flex-col gap-[2px] items-end">
-                                  <span className="font-mono text-[11px] text-purple-900 break-all whitespace-pre-wrap">{resolved.in === 'path' ? pathParams[resolved.name] : queryParams[resolved.name]}</span>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                          {resolved.description && (
-                            <div className="text-[11px] my-[7px]">
-                              <span className="font-bold">
-                                Description: {" "}
-                              </span>
-                              {resolved.description}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </>
-              )}
+                );
+              })}
             </div>
           )}
 
@@ -464,14 +447,14 @@ export default function YellowCardApi({ yamlUrl }: Props) {
               <div className="w-[100px]">
                 <DropDown
                   options={[
-                    { label: 'cURL', value: 'curl' },
-                    { label: 'Node.js', value: 'node' },
-                    { label: 'Python', value: 'python' },
-                    { label: 'Go', value: 'go' },
-                    { label: 'PHP', value: 'php' },
-                    { label: 'Ruby', value: 'ruby' },
-                    { label: 'Java', value: 'java' },
-                    { label: 'C#', value: 'csharp' }
+                      { label: 'cURL', value: 'shell' },
+                      { label: 'Node.js', value: 'javascript' },
+                      { label: 'Python', value: 'python' },
+                      { label: 'Go', value: 'go' },
+                      { label: 'PHP', value: 'php' },
+                      { label: 'Ruby', value: 'ruby' },
+                      { label: 'Java', value: 'java' },
+                      { label: 'C#', value: 'csharp' }
                   ]}
                   value={language}
                   onChange={setLanguage}
@@ -494,22 +477,19 @@ export default function YellowCardApi({ yamlUrl }: Props) {
             </div>
 
             <div className="font-mono [&_*]:font-mono">
-              <SyntaxHighlighter
-                language="bash"
-                style={oneDark}
-                customStyle={{
-                  maxHeight: '300px',
-                  minHeight: '200px',
-                  margin: 0,
-                  padding: '16px',
-                  fontFamily: 'monospace',
-                  fontSize: '12px',
-                  borderRadius: '0 0 12px 12px'
+              <Editor
+                height="300px"
+                language={language}
+                theme="vs-dark"
+                value={generatedCode}
+                onChange={(value) => setGeneratedCode(value || "")}
+                options={{
+                  readOnly: false,
+                  minimap: { enabled: false },
+                  fontSize: 12,
+                  fontFamily: 'monospace'
                 }}
-                codeTagProps={{ style: { fontFamily: 'monospace' } }}
-              >
-                {generatedCode}
-              </SyntaxHighlighter>
+              />
             </div>
           </div>
 
@@ -584,21 +564,21 @@ export default function YellowCardApi({ yamlUrl }: Props) {
                 </div>
               </div>
               <SyntaxHighlighter
-                  language="bash"
-                  style={oneDark}
-                  customStyle={{
-                    maxHeight: '300px',
-                    minHeight: '100px',
-                    margin: 0,
-                    padding: '16px',
-                    fontFamily: 'monospace',
-                    fontSize: '12px',
-                    borderRadius: '0 0 12px 12px'
-                  }}
-                  codeTagProps={{ style: { fontFamily: 'monospace' } }}
-                >
-                  {exampleResponse}
-                </SyntaxHighlighter>
+                language="bash"
+                style={oneDark}
+                customStyle={{
+                  maxHeight: '300px',
+                  minHeight: '100px',
+                  margin: 0,
+                  padding: '16px',
+                  fontFamily: 'monospace',
+                  fontSize: '12px',
+                  borderRadius: '0 0 12px 12px'
+                }}
+                codeTagProps={{ style: { fontFamily: 'monospace' } }}
+              >
+                {exampleResponse}
+              </SyntaxHighlighter>
             </div>
           </div>
         </div>
