@@ -88,14 +88,14 @@ export default function Home(): ReactNode {
                 </div>
               </Link>
 
-              <Link to='/' className="flex-1 w-full md:min-w-[250px] h-[200px] border border-solid border-[#C2C3C4] rounded-xl bg-white no-underline hover:no-underline text-inherit flex flex-col justify-between transition-all duration-200 hover:scale-[1.03] hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:bg-[url('/img/cardpic.png')] group">
+              <Link to='/docs/api/cryptobridge' className="flex-1 w-full md:min-w-[250px] h-[200px] border border-solid border-[#C2C3C4] rounded-xl bg-white no-underline hover:no-underline text-inherit flex flex-col justify-between transition-all duration-200 hover:scale-[1.03] hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:bg-[url('/img/cardpic.png')] group">
                 <div className="flex justify-between items-center p-4">
                   <img src="/img/api.svg" alt="" className="w-[30px] h-[30px] group-hover:[content:url('/img/nohoverapi.svg')] transition-all duration-300" />
                   <img src="/img/nohoverarrow.svg" alt="" className="w-[24px] h-[24px] group-hover:[content:url('/img/arrow.svg')] transition-all duration-300" />
                 </div>
                 <div className="flex flex-col gap-1.5 px-4 pb-4">
-                  <span className="font-semibold text-[16px] text-[#3A3C40] group-hover:text-white">Set-up & optimize APMs</span>
-                  <span className="text-[14px] text-[#7B7C7F] group-hover:text-white">Set up and optimize APMs.</span>
+                  <span className="font-semibold text-[16px] text-[#3A3C40] group-hover:text-white">API Reference</span>
+                  <span className="text-[14px] text-[#7B7C7F] group-hover:text-white">Explore endpoints, request formats, and responses.</span>
                 </div>
               </Link>
             </div>
@@ -116,7 +116,7 @@ export default function Home(): ReactNode {
                   <img src="/img/nohoverarrow.svg" alt="arrow" className="w-[24px] h-[24px] group-hover:[content:url('/img/arrow.svg')] transition-all duration-300" />
                 </Link>
 
-                <Link to='/docs/api/cryptobridge' className="min-w-[200px] h-[80px] rounded-[10px] border border-solid border-[#C2C3C4] p-5 flex justify-between items-center bg-white cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)] no-underline hover:no-underline hover:bg-[url('/img/bgcard1.svg')] group">
+                <Link to='/docs/environments' className="min-w-[200px] h-[80px] rounded-[10px] border border-solid border-[#C2C3C4] p-5 flex justify-between items-center bg-white cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)] no-underline hover:no-underline hover:bg-[url('/img/bgcard1.svg')] group">
                   <span className="font-medium text-[16px] text-[#6C2BD9] font-semibold group-hover:text-[#5a23b6]">Authentication</span>
                   <img src="/img/nohoverarrow.svg" alt="arrow" className="w-[24px] h-[24px] group-hover:[content:url('/img/arrow.svg')] transition-all duration-300" />
                 </Link>
