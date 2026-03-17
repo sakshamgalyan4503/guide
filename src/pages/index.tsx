@@ -42,6 +42,7 @@ export default function Home(): ReactNode {
   const { siteConfig } = useDocusaurusContext();
   const [open, setOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
+
   useEffect(() => {
     const match = window.matchMedia("(prefers-color-scheme: dark)");
     setIsDark(match.matches);
